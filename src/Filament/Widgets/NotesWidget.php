@@ -15,5 +15,5 @@ class NotesWidget extends Widget
     }
 
     protected int | string | array $columnSpan = 2;
-    protected static string $view = 'filament-notes::widgets.notes-widget';
+    protected static string $view = 'filament-notes::widget.notes-widget';
 }

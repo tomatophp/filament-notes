@@ -16,33 +16,43 @@ class NoteForm
             ])->schema([
                 Forms\Components\Tabs::make()
                     ->tabs([
-                        Forms\Components\Tabs\Tab::make('General')
+                        Forms\Components\Tabs\Tab::make(trans('filament-notes::messages.tabs.general'))
                             ->schema([
                                 Forms\Components\TextInput::make('title')
+                                    ->label(trans('filament-notes::messages.columns.title'))
                                     ->columnSpanFull(),
                                 Forms\Components\RichEditor::make('body')
+                                    ->label(trans('filament-notes::messages.columns.body'))
                                     ->columnSpanFull(),
-                                Forms\Components\DatePicker::make('date'),
-                                Forms\Components\TimePicker::make('time'),
+                                Forms\Components\DatePicker::make('date')->label(trans('filament-notes::messages.columns.date')),
+                                Forms\Components\TimePicker::make('time')->label(trans('filament-notes::messages.columns.time')),
                                 Forms\Components\Toggle::make('is_pined')
+                                    ->label(trans('filament-notes::messages.columns.is_pined'))
                                     ->columnSpanFull(),
                                 Forms\Components\Toggle::make('is_public')
+                                    ->label(trans('filament-notes::messages.columns.is_public'))
                                     ->columnSpanFull(),
                             ])
                             ->columns([
                                 'sm' => 1,
                                 'lg' => 2
                             ]),
-                        Forms\Components\Tabs\Tab::make('Style')
+                        Forms\Components\Tabs\Tab::make(trans('filament-notes::messages.tabs.style'))
                             ->schema([
-                                IconPicker::make('icon')->columnSpanFull(),
+                                IconPicker::make('icon')
+                                    ->label(trans('filament-notes::messages.columns.icon'))
+                                    ->columnSpanFull(),
                                 Forms\Components\ColorPicker::make('background')
+                                    ->label(trans('filament-notes::messages.columns.background'))
                                     ->default('#F4F39E'),
                                 Forms\Components\ColorPicker::make('border')
+                                    ->label(trans('filament-notes::messages.columns.border'))
                                     ->default('#DEE184'),
                                 Forms\Components\ColorPicker::make('color')
+                                    ->label(trans('filament-notes::messages.columns.color'))
                                     ->default('#47576B'),
                                 Forms\Components\Select::make('font_size')
+                                    ->label(trans('filament-notes::messages.columns.font_size'))
                                     ->default("1em")
                                     ->searchable()
                                     ->options([
@@ -52,6 +62,7 @@ class NoteForm
                                         '1.75em' => 'XL'
                                     ]),
 //                                Forms\Components\Select::make('font')
+//                                    ->label(trans('filament-notes::messages.columns.font'))
 //                                    ->searchable()
 //                                    ->default('null')
 //                                    ->options([

@@ -16,6 +16,23 @@ Add Sticky Notes to your FilamentPHP dashboard with tons of options and style
 ![View](https://raw.githubusercontent.com/tomatophp/filament-notes/master/arts/view.png)
 ![Widget](https://raw.githubusercontent.com/tomatophp/filament-notes/master/arts/widget.png)
 
+
+## Features
+
+- [x] Notes Resource
+- [x] Notes Style
+- [x] Pined Notes
+- [x] Notes Background
+- [x] Notes Font Color
+- [x] Notes Border Color
+- [x] Notes Font Widget
+- [x] Notes Widget
+- [x] Notes Widget Limit
+- [ ] Notes Font Family
+- [ ] Share Notes With Public Link
+- [ ] Share Notes With Selected User
+- [ ] Attach Notes To Models
+
 ## Installation
 
 ```bash
@@ -25,6 +42,22 @@ after install your package please run this command
 
 ```bash
 php artisan filament-notes:install
+```
+
+Finally reigster the plugin on `/app/Providers/Filament/AdminPanelProvider.php`
+
+```php
+$panel->plugin(\TomatoPHP\FilamentNotes\FilamentNotesPlugin::make())
+```
+
+## Using
+
+you can use it as a resource or you can use it as a widget by just register a widget on your panel provider like this
+
+```php
+$panel->widgets([
+    \TomatoPHP\FilamentNotes\Filament\Widgets\NotesWidget::class
+])
 ```
 
 ## Publish Assets

@@ -30,15 +30,16 @@ class NoteAction extends Component implements HasActions, HasForms, HasInfolists
     public function getNoteViewAction(): Action
     {
         return Action::make('getNoteViewAction')
+            ->label(trans('filament-notes::messages.actions.view'))
             ->hidden(fn() => $this->note === null)
             ->modalFooterActions(function (){
                 return [
                     Action::make('getNoteEditAction')
                         ->iconButton()
                         ->icon('heroicon-o-pencil-square')
-                        ->tooltip('Edit')
+                        ->tooltip(trans('filament-notes::messages.actions.edit'))
                         ->color('warning')
-                        ->label('Edit')
+                        ->label(trans('filament-notes::messages.actions.edit'))
                         ->fillForm($this->note->toArray())
                         ->cancelParentActions()
                         ->form(NoteForm::make())
@@ -46,8 +47,8 @@ class NoteAction extends Component implements HasActions, HasForms, HasInfolists
                            $this->note->update($data);
 
                            Notification::make()
-                                 ->title('Note Updated')
-                                 ->body('The note has been updated successfully.')
+                                 ->title(trans('filament-notes::messages.notifications.edit.title'))
+                                 ->body(trans('filament-notes::messages.notifications.edit.body'))
                                  ->success()
                                  ->send();
                         }),
@@ -55,9 +56,9 @@ class NoteAction extends Component implements HasActions, HasForms, HasInfolists
                         ->requiresConfirmation()
                         ->iconButton()
                         ->icon('heroicon-o-trash')
-                        ->tooltip('Delete')
+                        ->tooltip(trans('filament-notes::messages.actions.delete'))
                         ->color('danger')
-                        ->label('Delete')
+                        ->label(trans('filament-notes::messages.actions.delete'))
                         ->cancelParentActions()
                         ->action(function () {
                             $this->note->delete();
@@ -65,8 +66,8 @@ class NoteAction extends Component implements HasActions, HasForms, HasInfolists
                             $this->dispatch('note_deleted');
 
                             Notification::make()
-                                ->title('Note Deleted')
-                                ->body('The note has been deleted successfully.')
+                                ->title(trans('filament-notes::messages.notifications.delete.title'))
+                                ->body(trans('filament-notes::messages.notifications.delete.body'))
                                 ->success()
                                 ->send();
                         }),

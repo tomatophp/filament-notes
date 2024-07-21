@@ -3,7 +3,7 @@
 @endphp
 <x-filament-widgets::widget>
 
-    <x-filament::section heading="Notes" icon="heroicon-o-bookmark">
+    <x-filament::section heading="{{ trans('filament-notes::messages.title') }}" icon="heroicon-o-bookmark">
         <div class="flex flex-wrap gap-4 ">
             @foreach($notes as $key=>$note)
                 <div>

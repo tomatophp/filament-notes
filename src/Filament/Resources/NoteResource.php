@@ -21,6 +21,26 @@ class NoteResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-bookmark';
 
+    public static function getNavigationGroup(): ?string
+    {
+        return trans('filament-notes::messages.group');
+    }
+
+    public static function getPluralLabel(): ?string
+    {
+        return trans('filament-notes::messages.title');
+    }
+
+    public static function getLabel(): ?string
+    {
+        return trans('filament-notes::messages.single');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return trans('filament-notes::messages.title');
+    }
+
     public static function form(Form $form): Form
     {
         return $form->schema(NoteForm::make());
@@ -31,27 +51,27 @@ class NoteResource extends Resource
         return $table
             ->defaultSort('is_pined', 'desc')
             ->columns([
+                Tables\Columns\TextColumn::make('title')
+                    ->label(trans('filament-notes::messages.columns.title'))
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('body')
+                    ->label(trans('filament-notes::messages.columns.body'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('date')
+                    ->label(trans('filament-notes::messages.columns.date'))
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('time')
+                    ->label(trans('filament-notes::messages.columns.time'))
                     ->time()
                     ->sortable(),
                 Tables\Columns\IconColumn::make('is_pined')
+                    ->label(trans('filament-notes::messages.columns.is_pined'))
                     ->boolean(),
-                Tables\Columns\TextColumn::make('order')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\IconColumn::make('is_public')
+                    ->label(trans('filament-notes::messages.columns.is_public'))
+                    ->boolean(),
             ])
             ->content(fn()=> view('filament-notes::note-table'))
             ->filters([
