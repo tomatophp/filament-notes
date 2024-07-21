@@ -1,4 +1,4 @@
-![Screenshot](https://raw.githubusercontent.com//tomatophp/filament-notes/master/arts/3x1io-tomato-notes.jpg)
+![Screenshot](https://raw.githubusercontent.com/tomatophp/filament-notes/master/arts/3x1io-tomato-notes.jpg)
 
 # Filament Sticky Notes
 
@@ -10,6 +10,11 @@ Add Sticky Notes to your FilamentPHP dashboard with tons of options and style
 
 ## Screenshots
 
+![List](https://raw.githubusercontent.com/tomatophp/filament-notes/master/arts/list.png)
+![Create General](https://raw.githubusercontent.com/tomatophp/filament-notes/master/arts/create-general.png)
+![Create Style](https://raw.githubusercontent.com/tomatophp/filament-notes/master/arts/create-style.png)
+![View](https://raw.githubusercontent.com/tomatophp/filament-notes/master/arts/view.png)
+![Widget](https://raw.githubusercontent.com/tomatophp/filament-notes/master/arts/widget.png)
 
 ## Installation
 

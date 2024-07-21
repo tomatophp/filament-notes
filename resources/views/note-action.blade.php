@@ -84,6 +84,7 @@
                 transform: rotate(2deg);
                 width: 270px;
                 transition-duration: 0.25s;
+                font-size: {{$note->font_size}} !important;
                 font-family: "{{$note->font !='null'  && !empty($note->font)? str($note->font)->replace('+', ' ') : filament()->getCurrentPanel()->getFontFamily()}}" !important;
             }
             #sticky_note_{{$note->id}}:hover {
@@ -129,6 +130,7 @@
             }
             #sticky_note_{{$note->id}} .apply-font p{
                 font-size: '{{ $note->font_size }}' !important;
+                font-family: "{{$note->font !='null'  && !empty($note->font)? str($note->font)->replace('+', ' ') : filament()->getCurrentPanel()->getFontFamily()}}" !important;
             }
 
 
