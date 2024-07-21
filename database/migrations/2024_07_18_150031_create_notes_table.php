@@ -39,7 +39,7 @@ return new class extends Migration
             $table->string('icon')->nullable();
 
             //Font
-            $table->string('font_size')->default("1em")->unsigned()->nullable();
+            $table->string('font_size')->default("1em")->nullable();
             $table->string('font')->nullable();
 
             //Set Date/Time
