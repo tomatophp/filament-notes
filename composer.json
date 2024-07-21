@@ -1,0 +1,40 @@
+{
+    "name": "tomatophp/filament-notes",
+    "type": "library",
+    "description": "Add Sticky Notes to your FilamentPHP dashboard with tons of options and style",
+    "keywords": [
+        "php",
+        "laravel",
+        "template"
+    ],
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "TomatoPHP\\FilamentNotes\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "TomatoPHP\\FilamentNotes\\FilamentNotesServiceProvider"
+            ]
+        }
+    },
+    "authors": [
+        {
+            "name": "Fady Mondy",
+            "email": "info@3x1.io"
+        }
+    ],
+    "require": {
+        "php": "^8.1|^8.2",
+        "tomatophp/console-helpers": "^1.1",
+        "tomatophp/filament-icons": "^1.0",
+        "filament/filament": "^3.0"
+    }
+}
