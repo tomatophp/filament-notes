@@ -14,6 +14,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use TomatoPHP\FilamentIcons\Components\IconPicker;
+use TomatoPHP\FilamentTypes\Models\Type;
 
 class NoteResource extends Resource
 {
@@ -48,12 +49,29 @@ class NoteResource extends Resource
 
     public static function table(Table $table): Table
     {
+        $groups = [];
+        if(filament('filament-notes')->useGroups){
+            $groups[] = Tables\Grouping\Group::make('group');
+        }
+        if(filament('filament-notes')->useStatus){
+            $groups[] = Tables\Grouping\Group::make('status');
+        }
         return $table
             ->defaultSort('is_pined', 'desc')
             ->modifyQueryUsing(function ($query){
                 $query->where('is_public', true)->orWhere('user_id', auth()->id());
             })
             ->columns([
+                Tables\Columns\TextColumn::make('group')
+                    ->hidden(!filament('filament-notes')->useGroups)
+                    ->label(trans('filament-notes::messages.columns.group'))
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('status')
+                    ->hidden(!filament('filament-notes')->useStatus)
+                    ->label(trans('filament-notes::messages.columns.status'))
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('title')
                     ->label(trans('filament-notes::messages.columns.title'))
                     ->sortable()
@@ -77,8 +95,32 @@ class NoteResource extends Resource
                     ->boolean(),
             ])
             ->content(fn()=> view('filament-notes::note-table'))
+            ->groups($groups)
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('group')
+                    ->hidden(!filament('filament-notes')->useGroups)
+                    ->searchable()
+                    ->label('Filter By Group')
+                    ->options(
+                        Type::query()
+                            ->where('for', 'notes')
+                            ->where('type', 'groups')
+                            ->pluck('name', 'key')
+                            ->toArray()
+                    ),
+                Tables\Filters\SelectFilter::make('status')
+                    ->hidden(!filament('filament-notes')->useGroups)
+                    ->searchable()
+                    ->label('Filter By Status')
+                    ->options(
+                        Type::query()
+                            ->where('for', 'notes')
+                            ->where('type', 'status')
+                            ->pluck('name', 'key')
+                            ->toArray()
+                    ),
+                Tables\Filters\TernaryFilter::make('is_public'),
+                Tables\Filters\TernaryFilter::make('is_pind'),
             ])
             ->paginationPageOptions(['12','24', '48'])
             ->defaultPaginationPageOption(12)

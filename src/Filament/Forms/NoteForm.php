@@ -4,6 +4,7 @@ namespace TomatoPHP\FilamentNotes\Filament\Forms;
 
 use TomatoPHP\FilamentIcons\Components\IconPicker;
 use Filament\Forms;
+use TomatoPHP\FilamentTypes\Models\Type;
 
 class NoteForm
 {
@@ -61,6 +62,28 @@ class NoteForm
                                         '1.5em' => 'LG',
                                         '1.75em' => 'XL'
                                     ]),
+                                Forms\Components\Select::make('group')
+                                    ->hidden(!filament('filament-notes')->useGroups)
+                                    ->label(trans('filament-notes::messages.columns.group'))
+                                    ->searchable()
+                                    ->options(
+                                        Type::query()
+                                            ->where('for', 'notes')
+                                            ->where('type', 'groups')
+                                            ->pluck('name', 'key')
+                                            ->toArray()
+                                    ),
+                                Forms\Components\Select::make('status')
+                                    ->hidden(!filament('filament-notes')->useStatus)
+                                    ->label(trans('filament-notes::messages.columns.status'))
+                                    ->searchable()
+                                    ->options(
+                                        Type::query()
+                                            ->where('for', 'notes')
+                                            ->where('type', 'status')
+                                            ->pluck('name', 'key')
+                                            ->toArray()
+                                    ),
 //                                Forms\Components\Select::make('font')
 //                                    ->label(trans('filament-notes::messages.columns.font'))
 //                                    ->searchable()

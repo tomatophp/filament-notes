@@ -4,6 +4,10 @@ return [
     "title" => "Notes",
     "single" => "Note",
     "group" => "Content",
+    "pages" => [
+        "groups" => "Manage Notes Groups",
+        "status" => "Manage Notes Status"
+    ],
     "columns" => [
         "title" => "Title",
         "body" => "Body",
@@ -17,6 +21,8 @@ return [
         "color" => "Color",
         "font_size" => "Font Size",
         "font" => "Font",
+        "group" => "Group",
+        "status" => "Status",
         "user_id" => "User ID",
         "user_type" => "User Type",
         "model_id" => "Model ID",

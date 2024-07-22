@@ -28,11 +28,11 @@ Add Sticky Notes to your FilamentPHP dashboard with tons of options and style
 - [x] Notes Widget
 - [x] Notes Widget Limit
 - [x] Public/Private Notes
+- [x] Notes Groups
+- [x] Notes Status
 - [ ] Notes Templates
-- [ ] Notes Groups
 - [ ] Notes Reminders
 - [ ] Notes To Notifications
-- [ ] Notes Status
 - [ ] Notes CheckLists
 - [ ] Notes Font Family
 - [ ] Share Notes With Public Link
@@ -56,7 +56,7 @@ Finally reigster the plugin on `/app/Providers/Filament/AdminPanelProvider.php`
 $panel->plugin(\TomatoPHP\FilamentNotes\FilamentNotesPlugin::make())
 ```
 
-## Using
+## Use Widget
 
 you can use it as a resource or you can use it as a widget by just register a widget on your panel provider like this
 
@@ -64,6 +64,30 @@ you can use it as a resource or you can use it as a widget by just register a wi
 $panel->widgets([
     \TomatoPHP\FilamentNotes\Filament\Widgets\NotesWidget::class
 ])
+```
+## Use Livewire Component
+
+you can use selected note anywhere using livewire component
+
+```html
+ <livewire:note-action :note="$note" />
+```
+
+## Use Groups & Status
+
+to use this feature you need to install [filament-types](https://www.github.com/tomatophp/filament-types) or use this command
+
+```bash
+composer require tomatophp/filament-types
+```
+
+than you can use this feature by add this methods to the plugin
+
+```php
+$panel->plugin(\TomatoPHP\FilamentNotes\FilamentNotesPlugin::make()
+    ->useStatus()
+    ->useGroups()
+)
 ```
 
 ## Publish Assets
