@@ -1,10 +1,16 @@
 @php
  $notes = \TomatoPHP\FilamentNotes\Models\Note::query()
+    ->where('is_public', 0)
     ->where('is_pined', 1)
-    ->where('is_public', 1)
+    ->where('user_id', auth()->user()->id)
     ->orWhere('is_public', 0)
     ->where('is_pined', 1)
-    ->where('user_id', auth()->id())
+    ->whereHas('noteMetas', function ($q){
+        $q->where('key', "App\Models\User")
+          ->where('value',(string)auth()->user()->id);
+    })
+    ->orWhere('is_public', 1)
+    ->where('is_pined', 1)
     ->orderBy('created_at', 'desc')
     ->limit(filament('filament-notes')->widgetLimit)
     ->get();

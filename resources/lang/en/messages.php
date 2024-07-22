@@ -37,7 +37,32 @@ return [
     "actions" => [
         "view" => "View",
         "edit" => "Edit",
-        "delete" => "Delete"
+        "delete" => "Delete",
+        "notify" => [
+            "label" => "Notify User",
+            "notification" => [
+                "title" => "Notification Sent",
+                "body" => "The notification has been sent."
+            ]
+        ],
+        "share" => [
+            "label" => "Share Note",
+            "notification" => [
+                "title" => "Note Shared Link Created",
+                "body" => "The note shared link has been created and copied to clipboard."
+            ]
+        ],
+        "user_access" => [
+            "label" => "User Access",
+            "form" => [
+                "model_id" => "Users",
+                "model_type" => "User Type",
+            ],
+            "notification" => [
+                "title" => "User Access Updated",
+                "body" => "The user access has been updated."
+            ]
+        ]
     ],
     "notifications" => [
         "edit" => [

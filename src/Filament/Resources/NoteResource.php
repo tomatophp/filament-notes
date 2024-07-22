@@ -2,6 +2,7 @@
 
 namespace TomatoPHP\FilamentNotes\Filament\Resources;
 
+use App\Models\User;
 use TomatoPHP\FilamentNotes\Filament\Forms\NoteForm;
 use TomatoPHP\FilamentNotes\Filament\Resources\NoteResource\Pages;
 use TomatoPHP\FilamentNotes\Filament\Resources\NoteResource\RelationManagers;
@@ -59,7 +60,14 @@ class NoteResource extends Resource
         return $table
             ->defaultSort('is_pined', 'desc')
             ->modifyQueryUsing(function ($query){
-                $query->where('is_public', true)->orWhere('user_id', auth()->id());
+                $query
+                    ->where('is_public', true)
+                    ->orWhere('user_id', auth()->id())
+                    ->orWhere('is_public', false)
+                    ->whereHas('noteMetas', function ($q){
+                        $q->where('key', "App\Models\User")
+                            ->where('value',(string)auth()->user()->id);
+                    });
             })
             ->columns([
                 Tables\Columns\TextColumn::make('group')

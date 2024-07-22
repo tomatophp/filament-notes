@@ -48,6 +48,8 @@ class FilamentNotesServiceProvider extends ServiceProvider
         ], 'filament-notes-lang');
 
         Livewire::component('note-action', NoteAction::class);
+
+        $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
     }
 
     public function boot(): void

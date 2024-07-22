@@ -30,14 +30,14 @@ Add Sticky Notes to your FilamentPHP dashboard with tons of options and style
 - [x] Public/Private Notes
 - [x] Notes Groups
 - [x] Notes Status
-- [ ] Notes Templates
+- [x] Notes To Notifications
+- [x] Share Notes With Public Link
+- [x] Share Notes With Selected User
 - [ ] Notes Reminders
-- [ ] Notes To Notifications
 - [ ] Notes CheckLists
 - [ ] Notes Font Family
-- [ ] Share Notes With Public Link
-- [ ] Share Notes With Selected User
 - [ ] Attach Notes To Models
+- [ ] Notes Templates
 
 ## Installation
 
@@ -87,6 +87,42 @@ than you can use this feature by add this methods to the plugin
 $panel->plugin(\TomatoPHP\FilamentNotes\FilamentNotesPlugin::make()
     ->useStatus()
     ->useGroups()
+)
+```
+
+## Use Convert Note To Notification
+
+to use this feature you need to install [filament-alerts](https://www.github.com/tomatophp/filament-alerts) or use this command
+
+```bash
+composer require tomatophp/filament-alerts
+```
+
+than you can use this feature by add this methods to the plugin
+
+```php
+$panel->plugin(\TomatoPHP\FilamentNotes\FilamentNotesPlugin::make()
+    ->useNotification()
+)
+```
+
+## Use Share Note With Public Link
+
+you can generate a public link and share it with others by allow this feature on your provider
+
+```php
+$panel->plugin(\TomatoPHP\FilamentNotes\FilamentNotesPlugin::make()
+    ->useShareLink()
+)
+```
+
+## Use User Access Permissions
+
+you can use this feature to allow only selected users to access the notes by allow this feature on your provider
+
+```php
+$panel->plugin(\TomatoPHP\FilamentNotes\FilamentNotesPlugin::make()
+    ->useUserAccess()
 )
 ```
 

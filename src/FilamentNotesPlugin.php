@@ -19,10 +19,31 @@ class FilamentNotesPlugin implements Plugin
     public int $widgetLimit = 4;
     public bool $useGroups = false;
     public bool $useStatus = false;
+    public bool $useNotification = false;
+    public bool $useUserAccess = false;
+    public bool $useShareLink = false;
 
     public function widgetLimit(int $limit): static
     {
         $this->widgetLimit = $limit;
+        return $this;
+    }
+
+    public function useNotification(bool $condation = true): static
+    {
+        $this->useNotification = $condation;
+        return $this;
+    }
+
+    public function useUserAccess(bool $condation = true): static
+    {
+        $this->useUserAccess = $condation;
+        return $this;
+    }
+
+    public function useShareLink(bool $condation = true): static
+    {
+        $this->useShareLink = $condation;
         return $this;
     }
 

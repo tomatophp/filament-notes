@@ -55,4 +55,34 @@ class Note extends Model
         return $this->morphTo('model');
     }
 
+    public function noteMetas()
+    {
+        return $this->hasMany(NoteMeta::class);
+    }
+
+    /**
+     * @param string $key
+     * @param string|array|object|null $value
+     * @return Model|string|array|null
+     */
+    public function meta(string $key, string|array|object|null $value=null): Model|string|null|array
+    {
+        if($value!==null){
+            if($value === 'null'){
+                return $this->noteMetas()->updateOrCreate(['key' => $key], ['value' => null]);
+            }
+            else {
+                return $this->noteMetas()->updateOrCreate(['key' => $key], ['value' => $value]);
+            }
+        }
+        else {
+            $meta = $this->noteMetas()->where('key', $key)->first();
+            if($meta){
+                return $meta->value;
+            }
+            else {
+                return $this->noteMetas()->updateOrCreate(['key' => $key], ['value' => null]);
+            }
+        }
+    }
 }

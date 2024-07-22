@@ -2,6 +2,9 @@
 
 namespace TomatoPHP\FilamentNotes\Livewire;
 
+use App\Models\User;
+use Illuminate\Support\Str;
+use TomatoPHP\FilamentAlerts\Services\SendNotification;
 use TomatoPHP\FilamentNotes\Filament\Forms\NoteForm;
 use TomatoPHP\FilamentNotes\Models\Note;
 use Filament\Actions\Action;
@@ -33,7 +36,129 @@ class NoteAction extends Component implements HasActions, HasForms, HasInfolists
             ->label(trans('filament-notes::messages.actions.view'))
             ->hidden(fn() => $this->note === null)
             ->modalFooterActions(function (){
-                return [
+                return $this->note->user_id === auth()->user()->id ? [
+                    Action::make('getNoteNotification')
+                        ->hidden(!filament('filament-notes')->useNotification)
+                        ->iconButton()
+                        ->icon('heroicon-o-bell')
+                        ->tooltip(trans('filament-notes::messages.actions.notify.label'))
+                        ->label(trans('filament-notes::messages.actions.notify.label'))
+                        ->form([
+                            Forms\Components\Select::make('providers')
+                                ->label(trans('filament-alerts::messages.templates.form.providers'))
+                                ->multiple()
+                                ->options(collect(config('filament-alerts.providers'))->pluck('name', 'id')->toArray()),
+                            Forms\Components\Select::make('privacy')
+                                ->label(trans('filament-alerts::messages.notifications.form.privacy'))
+                                ->searchable()
+                                ->options([
+                                    'public' => 'Public',
+                                    'private' => 'Private',
+                                ])
+                                ->live()
+                                ->required()
+                                ->default('public'),
+                            Forms\Components\Select::make('model_type')
+                                ->searchable()
+                                ->label(trans('filament-alerts::messages.notifications.form.user_type'))
+                                ->options(config('filament-alerts.models'))
+                                ->required()
+                                ->live(),
+                            Forms\Components\Select::make('model_id')
+                                ->label(trans('filament-alerts::messages.notifications.form.user'))
+                                ->searchable()
+                                ->hidden(fn (Forms\Get $get): bool => $get('privacy') !== 'private')
+                                ->options(fn (Forms\Get $get) => $get('model_type') ? $get('model_type')::pluck('name', 'id')->toArray() : [])
+                                ->required(),
+                        ])
+                        ->cancelParentActions()
+                        ->action(function(array $data){
+                            $nofity = SendNotification::make($data['providers'])
+                                ->title($this->note->title)
+                                ->message($this->note->body)
+                                ->privacy($data['privacy'])
+                                ->model($data['model_type'])
+                                ->id($data['privacy'] === 'private' ? $data['model_id'] : null);
+
+                            if($this->note->icon){
+                                $nofity->icon($this->note->icon);
+                            }
+
+                            $nofity->fire();
+
+                            Notification::make()
+                                ->title(trans('filament-notes::messages.actions.notify.notification.title'))
+                                ->body(trans('filament-notes::messages.actions.notify.notification.body'))
+                                ->success()
+                                ->send();
+                        }),
+                    Action::make('getNoteShareUrl')
+                        ->hidden(!filament('filament-notes')->useShareLink)
+                        ->iconButton()
+                        ->icon('heroicon-o-link')
+                        ->tooltip(trans('filament-notes::messages.actions.share.label'))
+                        ->label(trans('filament-notes::messages.actions.share.label'))
+                        ->action(function(){
+                            $uuid = Str::uuid();
+                            $this->note->meta('share', $uuid);
+
+                            $this->js('window.navigator.clipboard.writeText("'.route('notes.view', [
+                                'note' => $this->note,
+                                'uuid' => $uuid,
+                                ]).'")');
+
+                            Notification::make()
+                                ->title(trans('filament-notes::messages.actions.share.notification.title'))
+                                ->body(trans('filament-notes::messages.actions.share.notification.body'))
+                                ->success()
+                                ->send();
+                        }),
+                    Action::make('getNoteUserAccess')
+                        ->hidden($this->note->is_public || !filament('filament-notes')->useUserAccess)
+                        ->iconButton()
+                        ->icon('heroicon-o-user')
+                        ->tooltip(trans('filament-notes::messages.actions.user_access.label'))
+                        ->label(trans('filament-notes::messages.actions.user_access.label'))
+                        ->fillForm([
+                            'model_type' => User::class,
+                            'model_id' => $this->note->noteMetas()->where('key', User::class)->pluck('value')->toArray(),
+                        ])
+                        ->form([
+                            Forms\Components\Select::make('model_type')
+                                ->label(trans('filament-notes::messages.actions.user_access.form.model_type'))
+                                ->required()
+                                ->options([
+                                    User::class => 'Users',
+                                ])
+                                ->live()
+                                ->searchable(),
+                            Forms\Components\Select::make('model_id')
+                                ->label(trans('filament-notes::messages.actions.user_access.form.model_id'))
+                                ->searchable()
+                                ->multiple()
+                                ->hidden(fn (Forms\Get $get): bool => !$get('model_type'))
+                                ->options(fn (Forms\Get $get) => $get('model_type') ? $get('model_type')::where('id', '!=', auth()->user()->id)->pluck('name', 'id')->toArray() : []),
+                        ])
+                        ->action(function(array $data){
+                            if(count($data['model_id']) === 0){
+                                $this->note->noteMetas()->where('key', User::class)->delete();
+                            }
+                            foreach ($data['model_id'] as $user){
+                                $exists = $this->note->noteMetas()->where('key', $data['model_type'])->where('value', $user)->first();
+                                if(!$exists){
+                                    $this->note->noteMetas()->create([
+                                        'key' => $data['model_type'],
+                                        'value' => $user,
+                                    ]);
+                                }
+                            }
+
+                            Notification::make()
+                                ->title(trans('filament-notes::messages.actions.user_access.notification.title'))
+                                ->body(trans('filament-notes::messages.actions.user_access.notification.body'))
+                                ->success()
+                                ->send();
+                        }),
                     Action::make('getNoteEditAction')
                         ->iconButton()
                         ->icon('heroicon-o-pencil-square')
@@ -71,7 +196,7 @@ class NoteAction extends Component implements HasActions, HasForms, HasInfolists
                                 ->success()
                                 ->send();
                         }),
-                ];
+                ] : [];
             })
             ->modalHeading('')
             ->modalContent(function (){
