@@ -7,7 +7,6 @@ use Livewire\Attributes\On;
 
 class NotesWidget extends Widget
 {
-    public int $limit = 4;
     #[On('note_deleted')]
     public function noteDeleted(): void
     {

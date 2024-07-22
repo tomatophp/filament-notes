@@ -50,6 +50,9 @@ class NoteResource extends Resource
     {
         return $table
             ->defaultSort('is_pined', 'desc')
+            ->modifyQueryUsing(function ($query){
+                $query->where('is_public', true)->orWhere('user_id', auth()->id());
+            })
             ->columns([
                 Tables\Columns\TextColumn::make('title')
                     ->label(trans('filament-notes::messages.columns.title'))

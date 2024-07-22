@@ -1,5 +1,13 @@
 @php
- $notes = \TomatoPHP\FilamentNotes\Models\Note::query()->where('is_pined', 1)->orderBy('created_at', 'desc')->limit($limit)->get();
+ $notes = \TomatoPHP\FilamentNotes\Models\Note::query()
+    ->where('is_pined', 1)
+    ->where('is_public', 1)
+    ->orWhere('is_public', 0)
+    ->where('is_pined', 1)
+    ->where('user_id', auth()->id())
+    ->orderBy('created_at', 'desc')
+    ->limit(filament('filament-notes')->widgetLimit)
+    ->get();
 @endphp
 <x-filament-widgets::widget>
 
