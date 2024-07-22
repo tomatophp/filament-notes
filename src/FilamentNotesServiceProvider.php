@@ -2,6 +2,8 @@
 
 namespace TomatoPHP\FilamentNotes;
 
+use Filament\Support\Assets\Js;
+use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 use TomatoPHP\FilamentNotes\Livewire\NoteAction;
@@ -54,6 +56,6 @@ class FilamentNotesServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        //you boot methods here
+        //
     }
 }

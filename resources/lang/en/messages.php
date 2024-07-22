@@ -62,6 +62,24 @@ return [
                 "title" => "User Access Updated",
                 "body" => "The user access has been updated."
             ]
+        ],
+        "checklist"=> [
+            "label" => "Add Checklist",
+            "form" => [
+                "checklist"=> "Checklist"
+            ],
+            "state" => [
+                "done" => "Done",
+                "pending" => "Pending"
+            ],
+            "notification" => [
+                "title" => "Checklist Updated",
+                "body" => "The checklist has been updated.",
+                "updated" => [
+                    "title" => "Checklist Item Updated",
+                    "body" => "The checklist item has been updated."
+                ],
+            ]
         ]
     ],
     "notifications" => [

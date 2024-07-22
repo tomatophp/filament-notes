@@ -4,6 +4,7 @@ namespace TomatoPHP\FilamentNotes\Livewire;
 
 use App\Models\User;
 use Illuminate\Support\Str;
+use Livewire\Attributes\On;
 use TomatoPHP\FilamentAlerts\Services\SendNotification;
 use TomatoPHP\FilamentNotes\Filament\Forms\NoteForm;
 use TomatoPHP\FilamentNotes\Models\Note;
@@ -29,6 +30,52 @@ class NoteAction extends Component implements HasActions, HasForms, HasInfolists
     use InteractsWithInfolists;
 
     public ?Note $note=null;
+    public array $checkListValue = [];
+
+    #[On('note_deleted')]
+    public function noteDeleted(): void
+    {
+        $this->dispatch('$refresh');
+    }
+
+    public function getCachedData(): array
+    {
+        return [
+            'labels' => [trans('filament-notes::messages.actions.checklist.state.done'), trans('filament-notes::messages.actions.checklist.state.pending')],
+            'datasets' => [
+                [
+                    'data' => [collect($this->note->checklist)->filter(fn($item) => $item)->count(), collect($this->note->checklist)->filter(fn($item) => !$item)->count()],
+                    'backgroundColor' => [
+                        'rgb(16 185 129)',
+                        'rgb(244 63 94)'
+                    ],
+                    'hoverOffset' => 0
+                ]
+            ]
+        ];
+    }
+
+    public function updateChecklist(string $key)
+    {
+        $list = $this->note->checklist;
+        foreach ($list as $index=>$item){
+            if($index === $key){
+                $list[$index] = empty($item) ? true : false;
+            }
+        }
+        $this->note->checklist = $list;
+        $this->note->save();
+
+        $this->dispatch('updateChartData', data: $this->getCachedData());
+
+        Notification::make()
+            ->title(trans('filament-notes::messages.actions.checklist.notification.updated.title'))
+            ->body(trans('filament-notes::messages.actions.checklist.notification.updated.body'))
+            ->success()
+            ->send();
+
+        $this->dispatch('note_deleted');
+    }
 
     public function getNoteViewAction(): Action
     {
@@ -37,6 +84,31 @@ class NoteAction extends Component implements HasActions, HasForms, HasInfolists
             ->hidden(fn() => $this->note === null)
             ->modalFooterActions(function (){
                 return $this->note->user_id === auth()->user()->id ? [
+                    Action::make('getNoteChecklist')
+                        ->hidden(!filament('filament-notes')->useCheckList)
+                        ->iconButton()
+                        ->tooltip(trans('filament-notes::messages.actions.checklist.label'))
+                        ->label(trans('filament-notes::messages.actions.checklist.label'))
+                        ->fillForm([
+                            'checklist' => $this->note->checklist ?? [],
+                        ])
+                        ->form([
+                            Forms\Components\KeyValue::make('checklist')
+                                ->label(trans('filament-notes::messages.actions.checklist.form.checklist'))
+                                ->disableEditingValues(),
+                        ])
+                        ->action(function (array $data){
+                            $this->note->update([
+                                'checklist' => $data['checklist'],
+                            ]);
+
+                            Notification::make()
+                                ->title(trans('filament-notes::messages.actions.checklist.notification.title'))
+                                ->body(trans('filament-notes::messages.actions.checklist.notification.body'))
+                                ->success()
+                                ->send();
+                        })
+                        ->icon('heroicon-o-check-circle'),
                     Action::make('getNoteNotification')
                         ->hidden(!filament('filament-notes')->useNotification)
                         ->iconButton()

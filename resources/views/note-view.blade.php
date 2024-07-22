@@ -4,14 +4,29 @@
             <x-filament::icon icon="{{$note->icon}}" class="w-8 h-8 mb-2"  />
         </div>
     @endif
-    @if($note->title)
-        <h1 class="font-bold text-lg mb-2">{{ $note->title }}</h1>
-    @endif
-    <p class="prose text-wrap">
-        {!! str($note->body)->markdown()->limit(400)->toString() !!}
-    </p>
+        @if($note->title)
+            <h1 class="font-bold text-lg mb-2">{{ $note->title }}</h1>
+        @endif
+        <p class="prose text-wrap">
+            {!! str($note->body)->markdown()->limit(400)->toString() !!}
+        </p>
 
-        @if($note->time || $note->date || $note->user_id)
+        @if($note->checklist)
+            <div class="my-4 flex flex-col justify-start gap-2 text-sm">
+                @foreach($note->checklist as $key=>$checklist)
+                    <div class="flex justify-start gap-2">
+                        <div class="flex flex-col justify-center items-center">
+                            <input wire:change="updateChecklist('{{$key}}')" class="fi-checkbox-input dark:bg-gray-700 rounded border-none bg-white shadow-sm ring-1 transition duration-75 checked:ring-0 focus:ring-2 focus:ring-offset-0 disabled:pointer-events-none disabled:bg-gray-50 disabled:text-gray-50 disabled:checked:bg-current disabled:checked:text-gray-400 dark:disabled:bg-transparent dark:disabled:checked:bg-gray-600 text-primary-600 ring-gray-950/10 focus:ring-primary-600 checked:focus:ring-primary-500/50 dark:text-primary-500 dark:ring-white/20 dark:checked:bg-primary-500 dark:focus:ring-primary-500 dark:checked:focus:ring-primary-400/50 dark:disabled:ring-white/10 fi-ta-record-checkbox" type="checkbox" @if(!empty($checklist)) checked @endif>
+                        </div>
+                        <div class="flex flex-col justify-center items-center">
+                            <h1 class="font-bold">{{ $key }}</h1>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @endif
+
+        @if($note->time || $note->date || $note->checklist || $note->user_id)
             <div class="flex justify-between gap-2 py-4 text-sm">
                 <div>
                     @if($note->user_id)
@@ -46,6 +61,86 @@
                         </span>
                         </div>
                     @endif
+                    @if($note->checklist)
+                            @php
+                                $checked = 0;
+                                $notChecked = 0;
+                                foreach ($note->checklist as $item){
+                                    if($item){
+                                        $checked++;
+                                    }
+                                    else {
+                                        $notChecked++;
+                                    }
+                                }
+                            @endphp
+                            <div x-tooltip="{
+                                            content: '{{ $checked }}/{{ $checked + $notChecked }}',
+                                            theme: $store.theme,
+                                        }"  class="flex flex-col justify-center items-center">
+                                <div>
+                                    <div
+                                        @if (\Filament\Support\Facades\FilamentView::hasSpaMode())
+                                            ax-load="visible"
+                                        @else
+                                            ax-load
+                                        @endif
+                                        wire:ignore
+                                        x-ignore
+                                        x-data="chart({
+                                                type: 'doughnut',
+                                                options: {
+                                                    plugins: {
+                                                        legend: false,
+                                                        tooltip: false,
+                                                    },
+                                                    elements: {
+                                                        arc: {
+                                                            borderWidth: 0
+                                                        }
+                                                    },
+
+                                                    scales: {
+                                                        x: {
+                                                          border: {display: false},
+                                                          ticks: {display: false},
+                                                          grid: {display: false},
+                                                        },
+                                                        y: {
+                                                          border: {display: false},
+                                                          ticks: {display: false},
+                                                          grid: {display: false},
+                                                        },
+                                                    }
+                                                },
+                                                cachedData: @js($this->getCachedData()),
+                                            })"
+                                        ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('chart', 'filament/widgets') }}"
+                                    >
+                                        <span class="flex justify-center w-6 h-6" >
+                                            <div class="flex flex-col justify-center items-center pt-2 w-6 h-6">
+                                                <canvas  class="w-6 h-6" x-ref="canvas" id="checklist_{{ $note->id }}"></canvas>
+
+                                                <span x-ref="backgroundColorElement" class="text-gray-100 dark:text-gray-800"></span>
+
+                                                <span x-ref="borderColorElement" class="text-gray-400"></span>
+
+                                                <span
+                                                    x-ref="gridColorElement"
+                                                    class="text-gray-200 dark:text-gray-800"
+                                                ></span>
+
+                                                <span
+                                                    x-ref="textColorElement"
+                                                    class="text-gray-500 dark:text-gray-400"
+                                                ></span>
+                                            </div>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        @endif
                 </div>
             </div>
         @endif

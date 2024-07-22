@@ -22,10 +22,17 @@ class FilamentNotesPlugin implements Plugin
     public bool $useNotification = false;
     public bool $useUserAccess = false;
     public bool $useShareLink = false;
+    public bool $useCheckList = false;
 
     public function widgetLimit(int $limit): static
     {
         $this->widgetLimit = $limit;
+        return $this;
+    }
+
+    public function useCheckList(bool $condation = true): static
+    {
+        $this->useCheckList = $condation;
         return $this;
     }
 

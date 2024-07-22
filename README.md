@@ -33,8 +33,8 @@ Add Sticky Notes to your FilamentPHP dashboard with tons of options and style
 - [x] Notes To Notifications
 - [x] Share Notes With Public Link
 - [x] Share Notes With Selected User
+- [x] Notes CheckLists
 - [ ] Notes Reminders
-- [ ] Notes CheckLists
 - [ ] Notes Font Family
 - [ ] Attach Notes To Models
 - [ ] Notes Templates
@@ -123,6 +123,16 @@ you can use this feature to allow only selected users to access the notes by all
 ```php
 $panel->plugin(\TomatoPHP\FilamentNotes\FilamentNotesPlugin::make()
     ->useUserAccess()
+)
+```
+
+## Use Checklist
+
+you can use this feature to add a checklist to your notes by allowing this feature on your provider
+
+```php
+$panel->plugin(\TomatoPHP\FilamentNotes\FilamentNotesPlugin::make()
+    ->useChecklist()
 )
 ```
 

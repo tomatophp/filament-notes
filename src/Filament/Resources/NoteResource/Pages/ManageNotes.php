@@ -21,7 +21,7 @@ class ManageNotes extends ManageRecords
     #[On('note_deleted')]
     public function noteDeleted(): void
     {
-        $this->dispatch('$refresh');
+        $this->resetTable();
     }
 
     protected function getHeaderActions(): array

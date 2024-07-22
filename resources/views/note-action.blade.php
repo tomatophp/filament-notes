@@ -23,7 +23,7 @@
                     </p>
                 </div>
 
-                @if($note->time || $note->date || $note->user_id)
+                @if($note->time || $note->date || $note->checklist || $note->user_id)
                     <div class="flex justify-between gap-2 px-4 pb-4 text-sm">
                         <div>
                             @if($note->user_id)
@@ -43,7 +43,7 @@
                                     content: '{{ $note->time }}',
                                     theme: $store.theme,
                                 }" class="flex flex-col justify-center items-center">
-                            <span class="flex justify-center" tooltip="hi">
+                            <span class="flex justify-center" >
                                 <x-filament::icon icon="heroicon-s-clock" class="w-4 h-4" style="color: {{$note->color}} !important;" />
                             </span>
                                 </div>
@@ -53,11 +53,91 @@
                                 content: '{{ $note->date }}',
                                 theme: $store.theme,
                             }" class="flex flex-col justify-center items-center">
-                                <span class="flex justify-center" tooltip="hi">
+                                <span class="flex justify-center" >
                                     <x-filament::icon icon="heroicon-s-calendar-days" class="w-4 h-4" style="color: {{$note->color}} !important;" />
                                 </span>
                                 </div>
                             @endif
+                            @if($note->checklist)
+                                @php
+                                    $checked = 0;
+                                    $notChecked = 0;
+                                    foreach ($note->checklist as $item){
+                                        if($item){
+                                            $checked++;
+                                        }
+                                        else {
+                                            $notChecked++;
+                                        }
+                                    }
+                                @endphp
+                                    <div x-tooltip="{
+                                            content: '{{ $checked }}/{{ $checked + $notChecked }}',
+                                            theme: $store.theme,
+                                        }"  class="flex flex-col justify-center items-center">
+                                        <div>
+                                            <div
+                                                @if (\Filament\Support\Facades\FilamentView::hasSpaMode())
+                                                    ax-load="visible"
+                                                @else
+                                                    ax-load
+                                                @endif
+                                                wire:ignore
+                                                x-ignore
+                                                x-data="chart({
+                                                type: 'doughnut',
+                                                options: {
+                                                    plugins: {
+                                                        legend: false,
+                                                        tooltip: false,
+                                                    },
+                                                    elements: {
+                                                        arc: {
+                                                            borderWidth: 0
+                                                        }
+                                                    },
+
+                                                    scales: {
+                                                        x: {
+                                                          border: {display: false},
+                                                          ticks: {display: false},
+                                                          grid: {display: false},
+                                                        },
+                                                        y: {
+                                                          border: {display: false},
+                                                          ticks: {display: false},
+                                                          grid: {display: false},
+                                                        },
+                                                    }
+                                                },
+                                                cachedData: @js($this->getCachedData()),
+                                            })"
+                                                ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('chart', 'filament/widgets') }}"
+                                            >
+                                        <span class="flex justify-center" >
+                                            <div class="flex flex-col justify-center items-center pt-2">
+                                                <canvas  class="w-5 h-5" x-ref="canvas" id="checklist_{{ $note->id }}"></canvas>
+
+                                                <span x-ref="backgroundColorElement" class="text-gray-100 dark:text-gray-800"></span>
+
+                                                <span x-ref="borderColorElement" class="text-gray-400"></span>
+
+                                                <span
+                                                    x-ref="gridColorElement"
+                                                    class="text-gray-200 dark:text-gray-800"
+                                                ></span>
+
+                                                <span
+                                                    x-ref="textColorElement"
+                                                    class="text-gray-500 dark:text-gray-400"
+                                                ></span>
+                                            </div>
+                                        </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                @endif
                         </div>
 
                     </div>
@@ -155,4 +235,4 @@
         @endif
 
     </div>
-</x-filament-actions::action>
+    </x-filament-actions::action>
