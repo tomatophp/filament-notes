@@ -98,7 +98,7 @@ to use this feature you need to install [filament-alerts](https://www.github.com
 composer require tomatophp/filament-alerts
 ```
 
-than you can use this feature by add this methods to the plugin
+then you can use this feature by adding this method to the plugin
 
 ```php
 $panel->plugin(\TomatoPHP\FilamentNotes\FilamentNotesPlugin::make()
@@ -108,7 +108,7 @@ $panel->plugin(\TomatoPHP\FilamentNotes\FilamentNotesPlugin::make()
 
 ## Use Share Note With Public Link
 
-you can generate a public link and share it with others by allow this feature on your provider
+you can generate a public link and share it with others by allowing this feature on your provider
 
 ```php
 $panel->plugin(\TomatoPHP\FilamentNotes\FilamentNotesPlugin::make()
@@ -118,7 +118,7 @@ $panel->plugin(\TomatoPHP\FilamentNotes\FilamentNotesPlugin::make()
 
 ## Use User Access Permissions
 
-you can use this feature to allow only selected users to access the notes by allow this feature on your provider
+you can use this feature to allow only selected users to access the notes by allowing this feature on your provider
 
 ```php
 $panel->plugin(\TomatoPHP\FilamentNotes\FilamentNotesPlugin::make()
