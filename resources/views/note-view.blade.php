@@ -148,12 +148,18 @@
             <div class="flex justify-start gap-2 pb-4 text-sm">
                 @if($note->group && filament('filament-notes')->useGroups)
                     <div>
-                        <x-tomato-type label="{{ trans('filament-notes::messages.columns.group') }}" :type="type_of($note->group, 'notes', 'groups')" />
+                        @php $group = type_of($note->group, 'notes', 'groups') @endphp
+                        @if($group)
+                            <x-tomato-type label="{{ trans('filament-notes::messages.columns.group') }}" :type="$group" />
+                        @endif
                     </div>
                 @endif
                 @if($note->status && filament('filament-notes')->useStatus)
                     <div>
-                        <x-tomato-type label="{{ trans('filament-notes::messages.columns.status') }}" :type="type_of($note->status, 'notes', 'status')" />
+                        @php $status = type_of($note->status, 'notes', 'status') @endphp
+                        @if($status)
+                            <x-tomato-type label="{{ trans('filament-notes::messages.columns.status') }}" :type="$status" />
+                        @endif
                     </div>
                 @endif
             </div>
