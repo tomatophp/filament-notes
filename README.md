@@ -28,6 +28,10 @@ Add Sticky Notes to your FilamentPHP dashboard with tons of options and style
 - [x] Notes Font Widget
 - [x] Notes Widget
 - [x] Notes Widget Limit
+- [x] Public/Private Notes
+- [ ] Notes Groups
+- [ ] Notes Status
+- [ ] Notes CheckLists
 - [ ] Notes Font Family
 - [ ] Share Notes With Public Link
 - [ ] Share Notes With Selected User
