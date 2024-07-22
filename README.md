@@ -16,7 +16,6 @@ Add Sticky Notes to your FilamentPHP dashboard with tons of options and style
 ![View](https://raw.githubusercontent.com/tomatophp/filament-notes/master/arts/view.png)
 ![Widget](https://raw.githubusercontent.com/tomatophp/filament-notes/master/arts/widget.png)
 
-
 ## Features
 
 - [x] Notes Resource
@@ -29,7 +28,10 @@ Add Sticky Notes to your FilamentPHP dashboard with tons of options and style
 - [x] Notes Widget
 - [x] Notes Widget Limit
 - [x] Public/Private Notes
+- [ ] Notes Templates
 - [ ] Notes Groups
+- [ ] Notes Reminders
+- [ ] Notes To Notifications
 - [ ] Notes Status
 - [ ] Notes CheckLists
 - [ ] Notes Font Family
