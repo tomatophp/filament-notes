@@ -23,6 +23,8 @@ class NoteResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-bookmark';
 
+    protected static bool $isScopedToTenant = false;
+
     public static function getNavigationGroup(): ?string
     {
         return trans('filament-notes::messages.group');
