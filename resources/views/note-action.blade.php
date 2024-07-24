@@ -1,6 +1,6 @@
 <x-filament-actions::action
     :action="$action"
-    dynamic-component="filament::icon"
+    dynamic-component="filament::button"
     color="null"
     style="box-shadow: none;"
     class="cursor-pointer"
