@@ -9,7 +9,7 @@
     <div>
         <div class="post-it">
             <div id="sticky_note_{{$note->id}}" class="@if($note->is_pined) taped_note_pined @else taped_note @endif  w-full">
-                <div class="p-4 apply-font" style="color: {{ $note->color }} !important;">
+                <div class="p-4 apply-font text-start" style="color: {{ $note->color }} !important;">
                     @if($note->icon)
                         <div style="color: {{$note->color}} !important;">
                             <x-filament::icon icon="{{$note->icon}}" class="w-8 h-8 mb-2"  />
