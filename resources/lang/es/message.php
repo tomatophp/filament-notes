@@ -9,7 +9,7 @@ return [
         "status" => "Gestionar Estados de Notas"
     ],
     "columns" => [
-        "title" => "Titulo",
+        "title" => "Título",
         "body" => "Cuerpo",
         "date" => "Fecha",
         "time" => "Hora",
