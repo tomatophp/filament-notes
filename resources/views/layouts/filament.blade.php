@@ -68,8 +68,6 @@
     @vite(['resources/js/app.js'])
 
     @livewireStyles
-
-    @spladeHead
 </head>
 
 <body
