@@ -130,7 +130,7 @@ class NoteResource extends Resource
                             ->toArray()
                     ),
                 Tables\Filters\TernaryFilter::make('is_public'),
-                Tables\Filters\TernaryFilter::make('is_pind'),
+                Tables\Filters\TernaryFilter::make('is_pined'),
             ])
             ->paginationPageOptions(['12','24', '48'])
             ->defaultPaginationPageOption(12)
