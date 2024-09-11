@@ -87,7 +87,7 @@ class NoteAction extends Component implements HasActions, HasForms, HasInfolists
                     Action::make('getNoteChecklist')
                         ->hidden(!filament('filament-notes')->useCheckList)
                         ->iconButton()
-                        ->tooltip(trans('filament-notes::messages.actions.checklist.label'))
+//                        ->tooltip(trans('filament-notes::messages.actions.checklist.label'))
                         ->label(trans('filament-notes::messages.actions.checklist.label'))
                         ->fillForm([
                             'checklist' => $this->note->checklist ?? [],

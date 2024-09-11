@@ -46,7 +46,7 @@
                                     content: '{{ $note->time }}',
                                     theme: $store.theme,
                                 }" class="flex flex-col justify-center items-center">
-                            <span class="flex justify-center" tooltip="hi">
+                            <span class="flex justify-center">
                                 <x-filament::icon icon="heroicon-s-clock" class="w-4 h-4" style="color: {{$note->color}} !important;" />
                             </span>
                         </div>
@@ -56,7 +56,7 @@
                                 content: '{{ $note->date }}',
                                 theme: $store.theme,
                             }" class="flex flex-col justify-center items-center">
-                        <span class="flex justify-center" tooltip="hi">
+                        <span class="flex justify-center">
                             <x-filament::icon icon="heroicon-s-calendar-days" class="w-4 h-4" style="color: {{$note->color}} !important;" />
                         </span>
                         </div>
@@ -200,6 +200,10 @@
 </style>
 @else
 <style>
+    .tappy
+    {
+        display: none !important;
+    }
     .note {
         line-height: 1.2em;
         font-size: {{$note->font_size}} !important;
