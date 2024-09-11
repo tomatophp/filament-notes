@@ -1,11 +1,10 @@
 <?php
 namespace TomatoPHP\FilamentNotes\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use TomatoPHP\FilamentNotes\Models\Note;
 
-class NotesController extends Controller
+class NotesController
 {
     public function index(Note $note,string $uuid, Request $request)
     {

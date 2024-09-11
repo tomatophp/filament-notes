@@ -23,6 +23,13 @@ class FilamentNotesPlugin implements Plugin
     public bool $useUserAccess = false;
     public bool $useShareLink = false;
     public bool $useCheckList = false;
+    public string $navigationIcon = 'heroicon-o-bookmark';
+
+    public function navigationIcon(string $icon): static
+    {
+        $this->navigationIcon = $icon;
+        return $this;
+    }
 
     public function widgetLimit(int $limit): static
     {

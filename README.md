@@ -136,6 +136,16 @@ $panel->plugin(\TomatoPHP\FilamentNotes\FilamentNotesPlugin::make()
 )
 ```
 
+## Customize Note Resource Icon
+
+you can customize the note resource icon by adding this method to the plugin
+
+```php
+$panel->plugin(\TomatoPHP\FilamentNotes\FilamentNotesPlugin::make()
+    ->navigationIcon('heroicon-o-presentation-chart-line')
+)
+````
+
 ## Publish Assets
 
 you can publish config file by use this command
