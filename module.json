@@ -1,0 +1,29 @@
+{
+    "name": "FilamentNotes",
+    "alias": "filament-notes",
+    "description": {
+        "ar": "إضافة ملاحظات لاصقة إلى لوحة FilamentPHP الخاصة بك مع العديد من الخيارات والأنماط.",
+        "en": "Add Sticky Notes to your FilamentPHP dashboard with tons of options and style.",
+        "gr": "Add Sticky Notes to your FilamentPHP dashboard with tons of options and style.",
+        "sp": "Add Sticky Notes to your FilamentPHP dashboard with tons of options and style."
+    },
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "TomatoPHP\\FilamentNotes\\FilamentNotesServiceProvider"
+    ],
+    "files": [],
+    "title": {
+        "ar": "الملاحظات",
+        "en": "Sticky Notes",
+        "gr": "Sticky Notes",
+        "sp": "Sticky Notes"
+    },
+    "color": "#cc1448",
+    "icon": "heroicon-c-pencil-square",
+    "placeholder": "https://raw.githubusercontent.com/tomatophp/filament-notes/master/arts/3x1io-tomato-notes.jpg",
+    "type": "plugin",
+    "version": "v1.0.17",
+    "github" : "https://github.com/tomatophp/filament-notes",
+    "docs" : "https://github.com/tomatophp/filament-notes"
+}

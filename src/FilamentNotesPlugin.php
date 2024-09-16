@@ -4,6 +4,7 @@ namespace TomatoPHP\FilamentNotes;
 
 use Filament\Contracts\Plugin;
 use Filament\Panel;
+use Nwidart\Modules\Module;
 use TomatoPHP\FilamentNotes\Filament\Pages\NotesGroups;
 use TomatoPHP\FilamentNotes\Filament\Pages\NotesStatus;
 use TomatoPHP\FilamentNotes\Filament\Resources\NoteResource;
@@ -11,6 +12,8 @@ use TomatoPHP\FilamentNotes\Livewire\NoteAction;
 
 class FilamentNotesPlugin implements Plugin
 {
+    private bool $isActive = false;
+
     public function getId(): string
     {
         return 'filament-notes';
@@ -75,16 +78,27 @@ class FilamentNotesPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        $panel->resources([
-            NoteResource::class,
-        ])
-        ->pages([
-            NotesGroups::class,
-            NotesStatus::class,
-        ])
-        ->livewireComponents([
-            NoteAction::class
-        ]);
+        if(class_exists(Module::class)){
+            if(\Nwidart\Modules\Facades\Module::find('FilamentNotes')->isEnabled()){
+                $this->isActive = true;
+            }
+        }
+        else {
+            $this->isActive = true;
+        }
+
+        if($this->isActive) {
+            $panel->resources([
+                NoteResource::class,
+            ])
+                ->pages([
+                    NotesGroups::class,
+                    NotesStatus::class,
+                ])
+                ->livewireComponents([
+                    NoteAction::class
+                ]);
+        }
 
     }
 
