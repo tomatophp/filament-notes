@@ -23,7 +23,7 @@
     "icon": "heroicon-c-pencil-square",
     "placeholder": "https://raw.githubusercontent.com/tomatophp/filament-notes/master/arts/3x1io-tomato-notes.jpg",
     "type": "plugin",
-    "version": "v1.0.17",
+    "version": "v1.0.18",
     "github" : "https://github.com/tomatophp/filament-notes",
     "docs" : "https://github.com/tomatophp/filament-notes"
 }
