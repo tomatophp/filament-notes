@@ -8,6 +8,8 @@
 
 Add Sticky Notes to your FilamentPHP dashboard with tons of options and style
 
+**NOTE** please make sure you have `SQLite3` ex for PHP to make sure that Icons will be cached and work.
+
 ## Screenshots
 
 ![List](https://raw.githubusercontent.com/tomatophp/filament-notes/master/arts/list.png)
