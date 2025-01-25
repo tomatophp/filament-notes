@@ -2,7 +2,6 @@
 
 namespace TomatoPHP\FilamentNotes\Filament\Resources;
 
-use App\Models\User;
 use Illuminate\Contracts\Support\Htmlable;
 use TomatoPHP\FilamentNotes\Filament\Forms\NoteForm;
 use TomatoPHP\FilamentNotes\Filament\Resources\NoteResource\Pages;
@@ -59,22 +58,22 @@ class NoteResource extends Resource
     public static function table(Table $table): Table
     {
         $groups = [];
-        if(filament('filament-notes')->useGroups){
+        if (filament('filament-notes')->useGroups) {
             $groups[] = Tables\Grouping\Group::make('group');
         }
-        if(filament('filament-notes')->useStatus){
+        if (filament('filament-notes')->useStatus) {
             $groups[] = Tables\Grouping\Group::make('status');
         }
         return $table
             ->defaultSort('is_pined', 'desc')
-            ->modifyQueryUsing(function ($query){
+            ->modifyQueryUsing(function ($query) {
                 $query
                     ->where('is_public', true)
                     ->orWhere('user_id', auth()->id())
                     ->orWhere('is_public', false)
-                    ->whereHas('noteMetas', function ($q){
-                        $q->where('key', "App\Models\User")
-                            ->where('value',(string)auth()->user()->id);
+                    ->whereHas('noteMetas', function ($q) {
+                        $q->where('key', config('filament-notes.models.user'))
+                            ->where('value', (string)auth()->user()->id);
                     });
             })
             ->columns([
@@ -110,7 +109,7 @@ class NoteResource extends Resource
                     ->label(trans('filament-notes::messages.columns.is_public'))
                     ->boolean(),
             ])
-            ->content(fn()=> view('filament-notes::note-table'))
+            ->content(fn() => view('filament-notes::note-table'))
             ->groups($groups)
             ->filters([
                 Tables\Filters\SelectFilter::make('group')
@@ -138,7 +137,7 @@ class NoteResource extends Resource
                 Tables\Filters\TernaryFilter::make('is_public'),
                 Tables\Filters\TernaryFilter::make('is_pined'),
             ])
-            ->paginationPageOptions(['12','24', '48'])
+            ->paginationPageOptions(['12', '24', '48'])
             ->defaultPaginationPageOption(12)
             ->actions([
                 Tables\Actions\EditAction::make(),

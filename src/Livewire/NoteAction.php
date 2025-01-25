@@ -192,15 +192,15 @@ class NoteAction extends Component implements HasActions, HasForms, HasInfolists
                         ->tooltip(trans('filament-notes::messages.actions.user_access.label'))
                         ->label(trans('filament-notes::messages.actions.user_access.label'))
                         ->fillForm([
-                            'model_type' => User::class,
-                            'model_id' => $this->note->noteMetas()->where('key', User::class)->pluck('value')->toArray(),
+                            'model_type' => config('filament-notes.models.user'),
+                            'model_id' => $this->note->noteMetas()->where('key', config('filament-notes.models.user'))->pluck('value')->toArray(),
                         ])
                         ->form([
                             Forms\Components\Select::make('model_type')
                                 ->label(trans('filament-notes::messages.actions.user_access.form.model_type'))
                                 ->required()
                                 ->options([
-                                    User::class => 'Users',
+                                    config('filament-notes.models.user') => 'Users',
                                 ])
                                 ->live()
                                 ->searchable(),
@@ -213,7 +213,7 @@ class NoteAction extends Component implements HasActions, HasForms, HasInfolists
                         ])
                         ->action(function(array $data){
                             if(count($data['model_id']) === 0){
-                                $this->note->noteMetas()->where('key', User::class)->delete();
+                                $this->note->noteMetas()->where('key', config('filament-notes.models.user'))->delete();
                             }
                             foreach ($data['model_id'] as $user){
                                 $exists = $this->note->noteMetas()->where('key', $data['model_type'])->where('value', $user)->first();
