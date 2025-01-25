@@ -1,5 +1,7 @@
 <?php
 
 return [
-    //You config go here...
+    'models' => [
+        'user' => App\Models\User::class,
+    ]
 ];

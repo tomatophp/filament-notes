@@ -6,7 +6,7 @@
     ->orWhere('is_public', 0)
     ->where('is_pined', 1)
     ->whereHas('noteMetas', function ($q){
-        $q->where('key', "App\Models\User")
+        $q->where('key', config('filament-notes.models.user'))
           ->where('value',(string)auth()->user()->id);
     })
     ->orWhere('is_public', 1)

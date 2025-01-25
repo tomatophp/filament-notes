@@ -6,7 +6,6 @@ use TomatoPHP\FilamentNotes\Filament\Pages\NotesGroups;
 use TomatoPHP\FilamentNotes\Filament\Pages\NotesStatus;
 use TomatoPHP\FilamentNotes\Filament\Resources\NoteResource;
 use TomatoPHP\FilamentNotes\Models\Note;
-use App\Models\User;
 use Filament\Actions;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ManageRecords;
@@ -29,7 +28,7 @@ class ManageNotes extends ManageRecords
         return [
             Actions\CreateAction::make()->mutateFormDataUsing(function (array $data) {
                 $data['user_id'] = auth()->user()->id;
-                $data['user_type'] = User::class;
+                $data['user_type'] = config('filament-notes.models.user');
                 return $data;
             }),
             Actions\Action::make('status')
