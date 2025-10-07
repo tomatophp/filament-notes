@@ -25,8 +25,10 @@ class NoteForm
                                 Forms\Components\RichEditor::make('body')
                                     ->label(trans('filament-notes::messages.columns.body'))
                                     ->columnSpanFull(),
-                                Forms\Components\DatePicker::make('date')->label(trans('filament-notes::messages.columns.date')),
-                                Forms\Components\TimePicker::make('time')->label(trans('filament-notes::messages.columns.time')),
+                                Forms\Components\DatePicker::make('date')->label(trans('filament-notes::messages.columns.date'))
+                                     ->native(false),
+                                Forms\Components\TimePicker::make('time')->label(trans('filament-notes::messages.columns.time'))
+                                     ->native(false),
                                 Forms\Components\Toggle::make('is_pined')
                                     ->label(trans('filament-notes::messages.columns.is_pined'))
                                     ->columnSpanFull(),
