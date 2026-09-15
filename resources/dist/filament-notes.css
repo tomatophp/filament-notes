@@ -2,10 +2,11 @@
  * tomatophp/filament-notes
  *
  * Filament v5 panels only ship the utilities Filament itself uses, so the note cards, the notes grid,
- * the widget and the public share page bring the few utilities they need. Everything lives in the
- * utilities layer so a host theme that already compiles these classes keeps full control.
+ * the widget and the public share page bring the few utilities they need.
+ *
+ * The rules are deliberately not wrapped in a cascade layer: this file loads before Filament's app.css,
+ * so a layer declared here would rank below Filament's own layers and its reset would win.
  */
-@layer utilities {
     .flex { display: flex; }
     .flex-col { flex-direction: column; }
     .flex-wrap { flex-wrap: wrap; }
@@ -73,4 +74,3 @@
     :where(.dark, .dark *) .dark\:text-gray-800 { color: var(--gray-800); }
     :where(.dark, .dark *) .dark\:text-primary-500 { color: var(--primary-500); }
     :where(.dark, .dark *) .dark\:ring-white\/20 { --tw-ring-color: rgb(255 255 255 / 0.2); }
-}

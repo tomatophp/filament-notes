@@ -13,6 +13,14 @@ it('registers the notes stylesheet with filament', function () {
     expect($styles)->toContain('filament-notes');
 });
 
+it('ships unlayered rules so the utilities outrank the panel reset', function () {
+    // Registered package styles load before Filament's app.css; a cascade layer declared here would
+    // rank below Filament's base layer and its reset would strip the card padding and text sizes.
+    $css = file_get_contents(__DIR__.'/../../resources/dist/filament-notes.css');
+
+    expect($css)->not->toContain('@layer');
+});
+
 it('ships every utility class the note views use', function () {
     $css = file_get_contents(__DIR__.'/../../resources/dist/filament-notes.css');
 
