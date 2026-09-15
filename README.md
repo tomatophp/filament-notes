@@ -11,11 +11,14 @@ Add Sticky Notes to your FilamentPHP dashboard with tons of options and style
 
 ## Screenshots
 
-![List](https://raw.githubusercontent.com/tomatophp/filament-notes/master/arts/list.png)
-![Create General](https://raw.githubusercontent.com/tomatophp/filament-notes/master/arts/create-general.png)
-![Create Style](https://raw.githubusercontent.com/tomatophp/filament-notes/master/arts/create-style.png)
-![View](https://raw.githubusercontent.com/tomatophp/filament-notes/master/arts/view.png)
-![Widget](https://raw.githubusercontent.com/tomatophp/filament-notes/master/arts/widget.png)
+![Notes](https://raw.githubusercontent.com/tomatophp/filament-notes/master/arts/notes-light.png)
+![Notes Dark](https://raw.githubusercontent.com/tomatophp/filament-notes/master/arts/notes-dark.png)
+![View Note](https://raw.githubusercontent.com/tomatophp/filament-notes/master/arts/note-view-light.png)
+![View Note Dark](https://raw.githubusercontent.com/tomatophp/filament-notes/master/arts/note-view-dark.png)
+![Create Note](https://raw.githubusercontent.com/tomatophp/filament-notes/master/arts/create-note-light.png)
+![Create Note Dark](https://raw.githubusercontent.com/tomatophp/filament-notes/master/arts/create-note-dark.png)
+![Notes Widget](https://raw.githubusercontent.com/tomatophp/filament-notes/master/arts/widget-light.png)
+![Notes Widget Dark](https://raw.githubusercontent.com/tomatophp/filament-notes/master/arts/widget-dark.png)
 
 ## Features
 
