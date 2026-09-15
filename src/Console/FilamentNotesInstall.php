@@ -28,17 +28,16 @@ class FilamentNotesInstall extends Command
         parent::__construct();
     }
 
-
     /**
      * Execute the console command.
-     *
-     * @return mixed
      */
-    public function handle()
+    public function handle(): int
     {
         $this->info('Publish Vendor Assets');
-        $this->artisanCommand(["migrate"]);
-        $this->artisanCommand(["optimize:clear"]);
+        $this->artisanCommand(['migrate']);
+        $this->artisanCommand(['optimize:clear']);
         $this->info('Filament Notes installed successfully.');
+
+        return self::SUCCESS;
     }
 }

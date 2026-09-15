@@ -1,11 +1,8 @@
-<x-filament-actions::action
-    :action="$action"
-    dynamic-component="filament::button"
-    color="null"
-    style="box-shadow: none;"
+<div
+    wire:click="{{ $action->getLivewireClickHandler() }}"
+    role="button"
     class="cursor-pointer"
 >
-
     <div>
         <div class="post-it">
             <div id="sticky_note_{{$note->id}}" class="@if($note->is_pined) taped_note_pined @else taped_note @endif  w-full">
@@ -77,14 +74,9 @@
                                         }"  class="flex flex-col justify-center items-center">
                                         <div>
                                             <div
-                                                @if (\Filament\Support\Facades\FilamentView::hasSpaMode())
-                                                    ax-load="visible"
-                                                @else
-                                                    ax-load
-                                                @endif
+                                                x-load
                                                 wire:ignore
-                                                x-ignore
-                                                x-data="chart({
+                                                                                                x-data="chart({
                                                 type: 'doughnut',
                                                 options: {
                                                     plugins: {
@@ -110,9 +102,9 @@
                                                         },
                                                     }
                                                 },
-                                                cachedData: @js($this->getCachedData()),
+                                                cachedData: @js($checklistChartData),
                                             })"
-                                                ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('chart', 'filament/widgets') }}"
+                                                x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('chart', 'filament/widgets') }}"
                                             >
                                         <span class="flex justify-center" >
                                             <div class="flex flex-col justify-center items-center pt-2">
@@ -185,7 +177,7 @@
                 width: 270px;
                 transition-duration: 0.25s;
                 font-size: {{$note->font_size}} !important;
-                font-family: "{{$note->font !='null'  && !empty($note->font)? str($note->font)->replace('+', ' ') : filament()->getCurrentPanel()->getFontFamily()}}" !important;
+                font-family: "{{$note->font !='null'  && !empty($note->font)? str($note->font)->replace('+', ' ') : filament()->getFontFamily()}}" !important;
             }
             #sticky_note_{{$note->id}}:hover {
                 -webkit-transform: rotate(-2deg);
@@ -230,7 +222,7 @@
             }
             #sticky_note_{{$note->id}} .apply-font p{
                 font-size: '{{ $note->font_size }}' !important;
-                font-family: "{{$note->font !='null'  && !empty($note->font)? str($note->font)->replace('+', ' ') : filament()->getCurrentPanel()->getFontFamily()}}" !important;
+                font-family: "{{$note->font !='null'  && !empty($note->font)? str($note->font)->replace('+', ' ') : filament()->getFontFamily()}}" !important;
             }
 
 
@@ -241,4 +233,4 @@
         @endif
 
     </div>
-</x-filament-actions::action>
+</div>

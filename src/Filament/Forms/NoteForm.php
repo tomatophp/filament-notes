@@ -2,8 +2,18 @@
 
 namespace TomatoPHP\FilamentNotes\Filament\Forms;
 
+use Filament\Forms\Components\ColorPicker;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\TimePicker;
+use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use TomatoPHP\FilamentIcons\Components\IconPicker;
-use Filament\Forms;
+use TomatoPHP\FilamentNotes\FilamentNotesPlugin;
 use TomatoPHP\FilamentTypes\Models\Type;
 
 class NoteForm
@@ -11,100 +21,97 @@ class NoteForm
     public static function make(): array
     {
         return [
-            Forms\Components\Grid::make([
+            Grid::make([
                 'sm' => 1,
-                'lg' => 1
-            ])->schema([
-                Forms\Components\Tabs::make()
-                    ->tabs([
-                        Forms\Components\Tabs\Tab::make(trans('filament-notes::messages.tabs.general'))
-                            ->schema([
-                                Forms\Components\TextInput::make('title')
-                                    ->label(trans('filament-notes::messages.columns.title'))
-                                    ->columnSpanFull(),
-                                Forms\Components\RichEditor::make('body')
-                                    ->label(trans('filament-notes::messages.columns.body'))
-                                    ->columnSpanFull(),
-                                Forms\Components\DatePicker::make('date')->label(trans('filament-notes::messages.columns.date'))
-                                     ->native(false),
-                                Forms\Components\TimePicker::make('time')->label(trans('filament-notes::messages.columns.time'))
-                                     ->native(false),
-                                Forms\Components\Toggle::make('is_pined')
-                                    ->label(trans('filament-notes::messages.columns.is_pined'))
-                                    ->columnSpanFull(),
-                                Forms\Components\Toggle::make('is_public')
-                                    ->label(trans('filament-notes::messages.columns.is_public'))
-                                    ->columnSpanFull(),
-                            ])
-                            ->columns([
-                                'sm' => 1,
-                                'lg' => 2
-                            ]),
-                        Forms\Components\Tabs\Tab::make(trans('filament-notes::messages.tabs.style'))
-                            ->schema([
-                                IconPicker::make('icon')
-                                    ->label(trans('filament-notes::messages.columns.icon'))
-                                    ->columnSpanFull(),
-                                Forms\Components\ColorPicker::make('background')
-                                    ->label(trans('filament-notes::messages.columns.background'))
-                                    ->default('#F4F39E'),
-                                Forms\Components\ColorPicker::make('border')
-                                    ->label(trans('filament-notes::messages.columns.border'))
-                                    ->default('#DEE184'),
-                                Forms\Components\ColorPicker::make('color')
-                                    ->label(trans('filament-notes::messages.columns.color'))
-                                    ->default('#47576B'),
-                                Forms\Components\Select::make('font_size')
-                                    ->label(trans('filament-notes::messages.columns.font_size'))
-                                    ->default("1em")
-                                    ->searchable()
-                                    ->options([
-                                        '1em' => 'SM',
-                                        '1.25em' => 'MD',
-                                        '1.5em' => 'LG',
-                                        '1.75em' => 'XL'
-                                    ]),
-                                Forms\Components\Select::make('group')
-                                    ->hidden(!filament('filament-notes')->useGroups)
-                                    ->label(trans('filament-notes::messages.columns.group'))
-                                    ->searchable()
-                                    ->options(
-                                        Type::query()
-                                            ->where('for', 'notes')
-                                            ->where('type', 'groups')
-                                            ->pluck('name', 'key')
-                                            ->toArray()
-                                    ),
-                                Forms\Components\Select::make('status')
-                                    ->hidden(!filament('filament-notes')->useStatus)
-                                    ->label(trans('filament-notes::messages.columns.status'))
-                                    ->searchable()
-                                    ->options(
-                                        Type::query()
-                                            ->where('for', 'notes')
-                                            ->where('type', 'status')
-                                            ->pluck('name', 'key')
-                                            ->toArray()
-                                    ),
-//                                Forms\Components\Select::make('font')
-//                                    ->label(trans('filament-notes::messages.columns.font'))
-//                                    ->searchable()
-//                                    ->default('null')
-//                                    ->options([
-//                                        'null' => 'Default',
-//                                        'Edu+AU+VIC+WA+NT+Hand' => 'Edu Australia VIC WA NT Hand',
-//                                        'Playwrite+BE+VLG' => 'Playwrite België Vlaams Gewest',
-//                                    ]),
-                            ])
-                            ->columns([
-                                'sm' => 1,
-                                'lg' => 3
-                            ])
-
-                    ])
-                    ->contained(false)
-                    ->columnSpanFull()
+                'lg' => 1,
             ])
+                ->columnSpanFull()
+                ->components([
+                    Tabs::make()
+                        ->tabs([
+                            Tab::make(trans('filament-notes::messages.tabs.general'))
+                                ->components([
+                                    TextInput::make('title')
+                                        ->label(trans('filament-notes::messages.columns.title'))
+                                        ->columnSpanFull(),
+                                    RichEditor::make('body')
+                                        ->label(trans('filament-notes::messages.columns.body'))
+                                        ->columnSpanFull(),
+                                    DatePicker::make('date')
+                                        ->label(trans('filament-notes::messages.columns.date'))
+                                        ->native(false),
+                                    TimePicker::make('time')
+                                        ->label(trans('filament-notes::messages.columns.time'))
+                                        ->native(false),
+                                    Toggle::make('is_pined')
+                                        ->label(trans('filament-notes::messages.columns.is_pined'))
+                                        ->columnSpanFull(),
+                                    Toggle::make('is_public')
+                                        ->label(trans('filament-notes::messages.columns.is_public'))
+                                        ->columnSpanFull(),
+                                ])
+                                ->columns([
+                                    'sm' => 1,
+                                    'lg' => 2,
+                                ]),
+                            Tab::make(trans('filament-notes::messages.tabs.style'))
+                                ->components([
+                                    IconPicker::make('icon')
+                                        ->label(trans('filament-notes::messages.columns.icon'))
+                                        ->columnSpanFull(),
+                                    ColorPicker::make('background')
+                                        ->label(trans('filament-notes::messages.columns.background'))
+                                        ->default('#F4F39E'),
+                                    ColorPicker::make('border')
+                                        ->label(trans('filament-notes::messages.columns.border'))
+                                        ->default('#DEE184'),
+                                    ColorPicker::make('color')
+                                        ->label(trans('filament-notes::messages.columns.color'))
+                                        ->default('#47576B'),
+                                    Select::make('font_size')
+                                        ->label(trans('filament-notes::messages.columns.font_size'))
+                                        ->default('1em')
+                                        ->searchable()
+                                        ->options([
+                                            '1em' => 'SM',
+                                            '1.25em' => 'MD',
+                                            '1.5em' => 'LG',
+                                            '1.75em' => 'XL',
+                                        ]),
+                                    Select::make('group')
+                                        ->hidden(fn (): bool => ! FilamentNotesPlugin::get()->useGroups)
+                                        ->label(trans('filament-notes::messages.columns.group'))
+                                        ->searchable()
+                                        ->options(fn (): array => static::typeOptions('groups')),
+                                    Select::make('status')
+                                        ->hidden(fn (): bool => ! FilamentNotesPlugin::get()->useStatus)
+                                        ->label(trans('filament-notes::messages.columns.status'))
+                                        ->searchable()
+                                        ->options(fn (): array => static::typeOptions('status')),
+                                ])
+                                ->columns([
+                                    'sm' => 1,
+                                    'lg' => 3,
+                                ]),
+                        ])
+                        ->contained(false)
+                        ->columnSpanFull(),
+                ]),
         ];
+    }
+
+    /**
+     * Note groups / statuses stored in filament-types, keyed by type key with the translated name.
+     *
+     * @return array<string, string>
+     */
+    public static function typeOptions(string $type): array
+    {
+        return Type::query()
+            ->where('for', 'notes')
+            ->where('type', $type)
+            ->get()
+            ->mapWithKeys(fn (Type $record): array => [$record->key => (string) ($record->name ?: $record->key)])
+            ->all();
     }
 }

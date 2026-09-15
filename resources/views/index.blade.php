@@ -62,12 +62,16 @@
                         <div class="flex justify-start gap-2 px-4 pb-4 text-sm">
                             @if($note->group && filament('filament-notes')->useGroups)
                                 <div>
-                                    <x-tomato-type label="{{ trans('filament-notes::messages.columns.group') }}" :type="type_of($note->group, 'notes', 'groups')" />
+                                    @if($group = type_of($note->group, 'notes', 'groups'))
+                                        <x-tomato-type label="{{ trans('filament-notes::messages.columns.group') }}" :type="$group" />
+                                    @endif
                                 </div>
                             @endif
                             @if($note->status && filament('filament-notes')->useStatus)
                                 <div>
-                                    <x-tomato-type label="{{ trans('filament-notes::messages.columns.status') }}" :type="type_of($note->status, 'notes', 'status')" />
+                                    @if($status = type_of($note->status, 'notes', 'status'))
+                                        <x-tomato-type label="{{ trans('filament-notes::messages.columns.status') }}" :type="$status" />
+                                    @endif
                                 </div>
                             @endif
                         </div>
@@ -89,7 +93,7 @@
                     box-shadow: 0px 1px 3px rgba(0,0,0,0.25);
                     width: 100%;
                     font-size: {{$note->font_size}} !important;
-                    font-family: "{{$note->font !='null'  && !empty($note->font)? str($note->font)->replace('+', ' ') : filament()->getCurrentPanel()->getFontFamily()}}" !important;
+                    font-family: "{{$note->font !='null'  && !empty($note->font)? str($note->font)->replace('+', ' ') : filament()->getFontFamily()}}" !important;
                 }
                 #sticky_note_{{$note->id}}.taped_note:after {
                     display: block;
@@ -123,7 +127,7 @@
                 }
                 #sticky_note_{{$note->id}} .apply-font p{
                     font-size: '{{ $note->font_size }}' !important;
-                    font-family: "{{$note->font !='null'  && !empty($note->font)? str($note->font)->replace('+', ' ') : filament()->getCurrentPanel()->getFontFamily()}}" !important;
+                    font-family: "{{$note->font !='null'  && !empty($note->font)? str($note->font)->replace('+', ' ') : filament()->getFontFamily()}}" !important;
                 }
 
 

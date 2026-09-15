@@ -2,67 +2,78 @@
 
 namespace TomatoPHP\FilamentNotes\Livewire;
 
-use App\Models\User;
-use Illuminate\Support\Str;
-use Livewire\Attributes\On;
-use TomatoPHP\FilamentAlerts\Services\SendNotification;
-use TomatoPHP\FilamentNotes\Filament\Forms\NoteForm;
-use TomatoPHP\FilamentNotes\Models\Note;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Concerns\InteractsWithInfolists;
-use Filament\Infolists\Contracts\HasInfolists;
+use Filament\Forms\Components\KeyValue;
+use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
-use Filament\Support\Contracts\TranslatableContentDriver;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\View as SchemaView;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
+use Illuminate\Contracts\View\View;
+use Illuminate\Support\Js;
+use Illuminate\Support\Str;
 use Livewire\Component;
-use TomatoPHP\FilamentCms\Infolists\Components\MarkdownEntry;
-use TomatoPHP\FilamentIcons\Components\IconPicker;
-use Filament\Forms;
+use TomatoPHP\FilamentNotes\Filament\Forms\NoteForm;
+use TomatoPHP\FilamentNotes\FilamentNotesPlugin;
+use TomatoPHP\FilamentNotes\Models\Note;
+use TomatoPHP\FilamentNotes\Models\NoteMeta;
 
-class NoteAction extends Component implements HasActions, HasForms, HasInfolists
+class NoteAction extends Component implements HasActions, HasSchemas
 {
     use InteractsWithActions;
-    use InteractsWithForms;
-    use InteractsWithInfolists;
+    use InteractsWithSchemas;
 
-    public ?Note $note=null;
-    public array $checkListValue = [];
+    public ?Note $note = null;
 
-    #[On('note_deleted')]
-    public function noteDeleted(): void
+    public function isOwner(): bool
     {
-        $this->dispatch('$refresh');
+        return $this->note !== null
+            && auth()->check()
+            && (string) $this->note->user_id === (string) auth()->id();
     }
 
+    /**
+     * Doughnut chart data for the note checklist (done vs pending).
+     *
+     * @return array<string, mixed>
+     */
     public function getCachedData(): array
     {
+        $checklist = collect($this->note?->checklist ?? []);
+
         return [
-            'labels' => [trans('filament-notes::messages.actions.checklist.state.done'), trans('filament-notes::messages.actions.checklist.state.pending')],
+            'labels' => [
+                trans('filament-notes::messages.actions.checklist.state.done'),
+                trans('filament-notes::messages.actions.checklist.state.pending'),
+            ],
             'datasets' => [
                 [
-                    'data' => [collect($this->note->checklist)->filter(fn($item) => $item)->count(), collect($this->note->checklist)->filter(fn($item) => !$item)->count()],
+                    'data' => [
+                        $checklist->filter(fn (mixed $item): bool => (bool) $item)->count(),
+                        $checklist->reject(fn (mixed $item): bool => (bool) $item)->count(),
+                    ],
                     'backgroundColor' => [
                         'rgb(16 185 129)',
-                        'rgb(244 63 94)'
+                        'rgb(244 63 94)',
                     ],
-                    'hoverOffset' => 0
-                ]
-            ]
+                    'hoverOffset' => 0,
+                ],
+            ],
         ];
     }
 
-    public function updateChecklist(string $key)
+    public function updateChecklist(string $key): void
     {
-        $list = $this->note->checklist;
-        foreach ($list as $index=>$item){
-            if($index === $key){
-                $list[$index] = empty($item) ? true : false;
-            }
+        abort_unless($this->isOwner(), 403);
+
+        $list = $this->note->checklist ?? [];
+        if (array_key_exists($key, $list)) {
+            $list[$key] = empty($list[$key]);
         }
+
         $this->note->checklist = $list;
         $this->note->save();
 
@@ -73,219 +84,209 @@ class NoteAction extends Component implements HasActions, HasForms, HasInfolists
             ->body(trans('filament-notes::messages.actions.checklist.notification.updated.body'))
             ->success()
             ->send();
-
-        $this->dispatch('note_deleted');
     }
 
     public function getNoteViewAction(): Action
     {
         return Action::make('getNoteViewAction')
             ->label(trans('filament-notes::messages.actions.view'))
-            ->hidden(fn() => $this->note === null)
-            ->modalFooterActions(function (){
-                return $this->note->user_id === auth()->user()->id ? [
-                    Action::make('getNoteChecklist')
-                        ->hidden(!filament('filament-notes')->useCheckList)
-                        ->iconButton()
-//                        ->tooltip(trans('filament-notes::messages.actions.checklist.label'))
-                        ->label(trans('filament-notes::messages.actions.checklist.label'))
-                        ->fillForm([
-                            'checklist' => $this->note->checklist ?? [],
-                        ])
-                        ->form([
-                            Forms\Components\KeyValue::make('checklist')
-                                ->label(trans('filament-notes::messages.actions.checklist.form.checklist'))
-                                ->disableEditingValues(),
-                        ])
-                        ->action(function (array $data){
-                            $this->note->update([
-                                'checklist' => $data['checklist'],
-                            ]);
-
-                            Notification::make()
-                                ->title(trans('filament-notes::messages.actions.checklist.notification.title'))
-                                ->body(trans('filament-notes::messages.actions.checklist.notification.body'))
-                                ->success()
-                                ->send();
-                        })
-                        ->icon('heroicon-o-check-circle'),
-                    Action::make('getNoteNotification')
-                        ->hidden(!filament('filament-notes')->useNotification)
-                        ->iconButton()
-                        ->icon('heroicon-o-bell')
-                        ->tooltip(trans('filament-notes::messages.actions.notify.label'))
-                        ->label(trans('filament-notes::messages.actions.notify.label'))
-                        ->form([
-                            Forms\Components\Select::make('providers')
-                                ->label(trans('filament-alerts::messages.templates.form.providers'))
-                                ->multiple()
-                                ->options(collect(config('filament-alerts.providers'))->pluck('name', 'id')->toArray()),
-                            Forms\Components\Select::make('privacy')
-                                ->label(trans('filament-alerts::messages.notifications.form.privacy'))
-                                ->searchable()
-                                ->options([
-                                    'public' => 'Public',
-                                    'private' => 'Private',
-                                ])
-                                ->live()
-                                ->required()
-                                ->default('public'),
-                            Forms\Components\Select::make('model_type')
-                                ->searchable()
-                                ->label(trans('filament-alerts::messages.notifications.form.user_type'))
-                                ->options(config('filament-alerts.models'))
-                                ->required()
-                                ->live(),
-                            Forms\Components\Select::make('model_id')
-                                ->label(trans('filament-alerts::messages.notifications.form.user'))
-                                ->searchable()
-                                ->hidden(fn (Forms\Get $get): bool => $get('privacy') !== 'private')
-                                ->options(fn (Forms\Get $get) => $get('model_type') ? $get('model_type')::pluck('name', 'id')->toArray() : [])
-                                ->required(),
-                        ])
-                        ->cancelParentActions()
-                        ->action(function(array $data){
-                            $nofity = SendNotification::make($data['providers'])
-                                ->title($this->note->title)
-                                ->message($this->note->body)
-                                ->privacy($data['privacy'])
-                                ->model($data['model_type'])
-                                ->id($data['privacy'] === 'private' ? $data['model_id'] : null);
-
-                            if($this->note->icon){
-                                $nofity->icon($this->note->icon);
-                            }
-
-                            $nofity->fire();
-
-                            Notification::make()
-                                ->title(trans('filament-notes::messages.actions.notify.notification.title'))
-                                ->body(trans('filament-notes::messages.actions.notify.notification.body'))
-                                ->success()
-                                ->send();
-                        }),
-                    Action::make('getNoteShareUrl')
-                        ->hidden(!filament('filament-notes')->useShareLink)
-                        ->iconButton()
-                        ->icon('heroicon-o-link')
-                        ->tooltip(trans('filament-notes::messages.actions.share.label'))
-                        ->label(trans('filament-notes::messages.actions.share.label'))
-                        ->action(function(){
-                            $uuid = Str::uuid();
-                            $this->note->meta('share', $uuid);
-
-                            $this->js('window.navigator.clipboard.writeText("'.route('notes.view', [
-                                'note' => $this->note,
-                                'uuid' => $uuid,
-                                ]).'")');
-
-                            Notification::make()
-                                ->title(trans('filament-notes::messages.actions.share.notification.title'))
-                                ->body(trans('filament-notes::messages.actions.share.notification.body'))
-                                ->success()
-                                ->send();
-                        }),
-                    Action::make('getNoteUserAccess')
-                        ->hidden($this->note->is_public || !filament('filament-notes')->useUserAccess)
-                        ->iconButton()
-                        ->icon('heroicon-o-user')
-                        ->tooltip(trans('filament-notes::messages.actions.user_access.label'))
-                        ->label(trans('filament-notes::messages.actions.user_access.label'))
-                        ->fillForm([
-                            'model_type' => config('filament-notes.models.user'),
-                            'model_id' => $this->note->noteMetas()->where('key', config('filament-notes.models.user'))->pluck('value')->toArray(),
-                        ])
-                        ->form([
-                            Forms\Components\Select::make('model_type')
-                                ->label(trans('filament-notes::messages.actions.user_access.form.model_type'))
-                                ->required()
-                                ->options([
-                                    config('filament-notes.models.user') => 'Users',
-                                ])
-                                ->live()
-                                ->searchable(),
-                            Forms\Components\Select::make('model_id')
-                                ->label(trans('filament-notes::messages.actions.user_access.form.model_id'))
-                                ->searchable()
-                                ->multiple()
-                                ->hidden(fn (Forms\Get $get): bool => !$get('model_type'))
-                                ->options(fn (Forms\Get $get) => $get('model_type') ? $get('model_type')::where('id', '!=', auth()->user()->id)->pluck('name', 'id')->toArray() : []),
-                        ])
-                        ->action(function(array $data){
-                            if(count($data['model_id']) === 0){
-                                $this->note->noteMetas()->where('key', config('filament-notes.models.user'))->delete();
-                            }
-                            foreach ($data['model_id'] as $user){
-                                $exists = $this->note->noteMetas()->where('key', $data['model_type'])->where('value', $user)->first();
-                                if(!$exists){
-                                    $this->note->noteMetas()->create([
-                                        'key' => $data['model_type'],
-                                        'value' => $user,
-                                    ]);
-                                }
-                            }
-
-                            Notification::make()
-                                ->title(trans('filament-notes::messages.actions.user_access.notification.title'))
-                                ->body(trans('filament-notes::messages.actions.user_access.notification.body'))
-                                ->success()
-                                ->send();
-                        }),
-                    Action::make('getNoteEditAction')
-                        ->iconButton()
-                        ->icon('heroicon-o-pencil-square')
-                        ->tooltip(trans('filament-notes::messages.actions.edit'))
-                        ->color('warning')
-                        ->label(trans('filament-notes::messages.actions.edit'))
-                        ->fillForm($this->note->toArray())
-                        ->cancelParentActions()
-                        ->form(NoteForm::make())
-                        ->action(function (array $data) {
-                           $this->note->update($data);
-
-                           Notification::make()
-                                 ->title(trans('filament-notes::messages.notifications.edit.title'))
-                                 ->body(trans('filament-notes::messages.notifications.edit.body'))
-                                 ->success()
-                                 ->send();
-                        }),
-                    Action::make('getNoteDeleteAction')
-                        ->requiresConfirmation()
-                        ->iconButton()
-                        ->icon('heroicon-o-trash')
-                        ->tooltip(trans('filament-notes::messages.actions.delete'))
-                        ->color('danger')
-                        ->label(trans('filament-notes::messages.actions.delete'))
-                        ->cancelParentActions()
-                        ->action(function () {
-                            $this->note->delete();
-
-                            $this->dispatch('note_deleted');
-
-                            Notification::make()
-                                ->title(trans('filament-notes::messages.notifications.delete.title'))
-                                ->body(trans('filament-notes::messages.notifications.delete.body'))
-                                ->success()
-                                ->send();
-                        }),
-                ] : [];
-            })
+            ->hidden(fn (): bool => $this->note === null)
             ->modalHeading('')
-            ->modalContent(function (){
-                return view('filament-notes::note-view', ['note' => $this->note]);
-            })
+            ->modalFooterActions(fn (): array => $this->isOwner() ? $this->getOwnerActions() : [])
+            // A schema (not modalContent) so nested owner actions can return to this modal.
+            ->schema([
+                SchemaView::make('filament-notes::note-view')
+                    ->viewData(fn (): array => [
+                        'note' => $this->note,
+                        'checklistChartData' => $this->getCachedData(),
+                    ]),
+            ])
             ->view('filament-notes::note-action', [
                 'note' => $this->note,
+                'checklistChartData' => $this->getCachedData(),
             ]);
     }
 
-    public function render()
+    /**
+     * @return array<Action>
+     */
+    protected function getOwnerActions(): array
     {
-        return view('filament-notes::livewire.note-action');
+        $plugin = FilamentNotesPlugin::get();
+        $userModel = config('filament-notes.models.user');
+
+        return [
+            Action::make('getNoteChecklist')
+                ->hidden(! $plugin->useCheckList)
+                ->iconButton()
+                ->tooltip(trans('filament-notes::messages.actions.checklist.label'))
+                ->label(trans('filament-notes::messages.actions.checklist.label'))
+                ->fillForm(fn (): array => [
+                    'checklist' => $this->note->checklist ?? [],
+                ])
+                ->schema([
+                    KeyValue::make('checklist')
+                        ->label(trans('filament-notes::messages.actions.checklist.form.checklist'))
+                        ->editableValues(false),
+                ])
+                ->cancelParentActions()
+                ->action(function (array $data): void {
+                    $this->note->update([
+                        'checklist' => $data['checklist'],
+                    ]);
+
+                    Notification::make()
+                        ->title(trans('filament-notes::messages.actions.checklist.notification.title'))
+                        ->body(trans('filament-notes::messages.actions.checklist.notification.body'))
+                        ->success()
+                        ->send();
+                })
+                ->icon('heroicon-o-check-circle'),
+            Action::make('getNoteNotification')
+                ->hidden(! $plugin->useNotification)
+                ->iconButton()
+                ->icon('heroicon-o-bell')
+                ->tooltip(trans('filament-notes::messages.actions.notify.label'))
+                ->label(trans('filament-notes::messages.actions.notify.label'))
+                ->schema([
+                    Select::make('users')
+                        ->label(trans('filament-notes::messages.actions.user_access.form.model_id'))
+                        ->searchable()
+                        ->multiple()
+                        ->required()
+                        ->options(fn (): array => $userModel::query()->pluck('name', 'id')->toArray()),
+                ])
+                ->cancelParentActions()
+                ->action(function (array $data) use ($userModel): void {
+                    $notification = Notification::make()
+                        ->title($this->note->title ?: trans('filament-notes::messages.single'))
+                        ->body(Str::limit(strip_tags((string) $this->note->body), 250))
+                        ->icon($this->note->icon ?: 'heroicon-o-bookmark');
+
+                    foreach ($userModel::query()->whereKey($data['users'])->get() as $user) {
+                        $notification->sendToDatabase($user);
+                    }
+
+                    Notification::make()
+                        ->title(trans('filament-notes::messages.actions.notify.notification.title'))
+                        ->body(trans('filament-notes::messages.actions.notify.notification.body'))
+                        ->success()
+                        ->send();
+                }),
+            Action::make('getNoteShareUrl')
+                ->hidden(! $plugin->useShareLink)
+                ->iconButton()
+                ->icon('heroicon-o-link')
+                ->tooltip(trans('filament-notes::messages.actions.share.label'))
+                ->label(trans('filament-notes::messages.actions.share.label'))
+                ->cancelParentActions()
+                ->action(function (): void {
+                    $uuid = (string) Str::uuid();
+                    $this->note->meta('share', $uuid);
+
+                    $url = route('notes.view', [
+                        'note' => $this->note,
+                        'uuid' => $uuid,
+                    ]);
+
+                    $this->js('window.navigator.clipboard.writeText('.Js::from($url).')');
+
+                    Notification::make()
+                        ->title(trans('filament-notes::messages.actions.share.notification.title'))
+                        ->body(trans('filament-notes::messages.actions.share.notification.body'))
+                        ->success()
+                        ->send();
+                }),
+            Action::make('getNoteUserAccess')
+                ->hidden(fn (): bool => $this->note->is_public || ! $plugin->useUserAccess)
+                ->iconButton()
+                ->icon('heroicon-o-user')
+                ->tooltip(trans('filament-notes::messages.actions.user_access.label'))
+                ->label(trans('filament-notes::messages.actions.user_access.label'))
+                ->fillForm(fn (): array => [
+                    'model_type' => $userModel,
+                    'model_id' => $this->note->noteMetas()->where('key', $userModel)->pluck('value')->map(fn (mixed $id): string => (string) $id)->toArray(),
+                ])
+                ->schema([
+                    Select::make('model_type')
+                        ->label(trans('filament-notes::messages.actions.user_access.form.model_type'))
+                        ->required()
+                        ->options([
+                            $userModel => 'Users',
+                        ])
+                        ->live()
+                        ->searchable(),
+                    Select::make('model_id')
+                        ->label(trans('filament-notes::messages.actions.user_access.form.model_id'))
+                        ->searchable()
+                        ->multiple()
+                        ->hidden(fn (Get $get): bool => ! $get('model_type'))
+                        ->options(fn (Get $get): array => $get('model_type') ? $get('model_type')::query()->whereKeyNot(auth()->id())->pluck('name', 'id')->toArray() : []),
+                ])
+                ->cancelParentActions()
+                ->action(function (array $data) use ($userModel): void {
+                    $userIds = collect($data['model_id'] ?? [])->map(fn (mixed $id): string => (string) $id);
+
+                    $this->note->noteMetas()
+                        ->where('key', $userModel)
+                        ->get()
+                        ->reject(fn (NoteMeta $meta): bool => $userIds->contains((string) $meta->value))
+                        ->each->delete();
+
+                    foreach ($userIds as $userId) {
+                        $this->note->noteMetas()->firstOrCreate(
+                            ['key' => $userModel, 'value' => $userId],
+                        );
+                    }
+
+                    Notification::make()
+                        ->title(trans('filament-notes::messages.actions.user_access.notification.title'))
+                        ->body(trans('filament-notes::messages.actions.user_access.notification.body'))
+                        ->success()
+                        ->send();
+                }),
+            Action::make('getNoteEditAction')
+                ->iconButton()
+                ->icon('heroicon-o-pencil-square')
+                ->tooltip(trans('filament-notes::messages.actions.edit'))
+                ->color('warning')
+                ->label(trans('filament-notes::messages.actions.edit'))
+                ->fillForm(fn (): array => $this->note->toArray())
+                ->cancelParentActions()
+                ->schema(NoteForm::make())
+                ->action(function (array $data): void {
+                    $this->note->update($data);
+
+                    Notification::make()
+                        ->title(trans('filament-notes::messages.notifications.edit.title'))
+                        ->body(trans('filament-notes::messages.notifications.edit.body'))
+                        ->success()
+                        ->send();
+                }),
+            Action::make('getNoteDeleteAction')
+                ->requiresConfirmation()
+                ->iconButton()
+                ->icon('heroicon-o-trash')
+                ->tooltip(trans('filament-notes::messages.actions.delete'))
+                ->color('danger')
+                ->label(trans('filament-notes::messages.actions.delete'))
+                ->cancelParentActions()
+                ->action(function (): void {
+                    $this->note->delete();
+
+                    $this->dispatch('note_deleted');
+
+                    Notification::make()
+                        ->title(trans('filament-notes::messages.notifications.delete.title'))
+                        ->body(trans('filament-notes::messages.notifications.delete.body'))
+                        ->success()
+                        ->send();
+                }),
+        ];
     }
 
-    public function makeFilamentTranslatableContentDriver(): ?TranslatableContentDriver
+    public function render(): View
     {
-        // TODO: Implement makeFilamentTranslatableContentDriver() method.
+        return view('filament-notes::livewire.note-action');
     }
 }

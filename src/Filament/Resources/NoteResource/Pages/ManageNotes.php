@@ -2,16 +2,14 @@
 
 namespace TomatoPHP\FilamentNotes\Filament\Resources\NoteResource\Pages;
 
+use Filament\Actions\Action;
+use Filament\Actions\CreateAction;
+use Filament\Resources\Pages\ManageRecords;
+use Livewire\Attributes\On;
 use TomatoPHP\FilamentNotes\Filament\Pages\NotesGroups;
 use TomatoPHP\FilamentNotes\Filament\Pages\NotesStatus;
 use TomatoPHP\FilamentNotes\Filament\Resources\NoteResource;
-use TomatoPHP\FilamentNotes\Models\Note;
-use Filament\Actions;
-use Filament\Notifications\Notification;
-use Filament\Resources\Pages\ManageRecords;
-use Livewire\Attributes\On;
-use TomatoPHP\FilamentIcons\Components\IconPicker;
-use Filament\Forms;
+use TomatoPHP\FilamentNotes\FilamentNotesPlugin;
 
 class ManageNotes extends ManageRecords
 {
@@ -26,24 +24,25 @@ class ManageNotes extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()->mutateFormDataUsing(function (array $data) {
-                $data['user_id'] = auth()->user()->id;
+            CreateAction::make()->mutateDataUsing(function (array $data): array {
+                $data['user_id'] = auth()->id();
                 $data['user_type'] = config('filament-notes.models.user');
+
                 return $data;
             }),
-            Actions\Action::make('status')
-                ->hidden(!filament('filament-notes')->useStatus)
+            Action::make('status')
+                ->hidden(fn (): bool => ! FilamentNotesPlugin::get()->useStatus)
                 ->hiddenLabel()
                 ->color('warning')
                 ->tooltip(trans('filament-notes::messages.pages.status'))
-                ->url(fn()=> NotesStatus::getUrl())
+                ->url(fn (): string => NotesStatus::getUrl())
                 ->icon('heroicon-o-check-badge'),
-            Actions\Action::make('groups')
-                ->hidden(!filament('filament-notes')->useGroups)
+            Action::make('groups')
+                ->hidden(fn (): bool => ! FilamentNotesPlugin::get()->useGroups)
                 ->hiddenLabel()
                 ->color('success')
                 ->tooltip(trans('filament-notes::messages.pages.groups'))
-                ->url(fn()=> NotesGroups::getUrl())
+                ->url(fn (): string => NotesGroups::getUrl())
                 ->icon('heroicon-o-rectangle-group'),
         ];
     }

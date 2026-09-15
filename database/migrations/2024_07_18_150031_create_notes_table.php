@@ -17,36 +17,36 @@ return new class extends Migration
             $table->string('group')->nullable()->index();
             $table->string('status')->default('pending')->nullable()->index();
 
-            //Morph Link
+            // Morph Link
             $table->unsignedBigInteger('model_id')->nullable();
             $table->string('model_type')->nullable();
 
-            //User
+            // User
             $table->unsignedBigInteger('user_id')->nullable();
             $table->string('user_type')->nullable();
 
             $table->string('title')->nullable()->index();
             $table->text('body')->nullable();
 
-            //Style
+            // Style
             $table->string('background')->default('#F4F39E')->nullable();
             $table->string('border')->default('#DEE184')->nullable();
             $table->string('color')->default('#47576B')->nullable();
 
-            //Checklist
+            // Checklist
             $table->json('checklist')->nullable();
 
             $table->string('icon')->nullable();
 
-            //Font
-            $table->string('font_size')->default("1em")->nullable();
+            // Font
+            $table->string('font_size')->default('1em')->nullable();
             $table->string('font')->nullable();
 
-            //Set Date/Time
+            // Set Date/Time
             $table->date('date')->nullable();
             $table->time('time')->nullable();
 
-            //Sorting
+            // Sorting
             $table->boolean('is_public')->default(false)->nullable();
             $table->boolean('is_pined')->default(false)->nullable();
             $table->integer('order')->default(0)->nullable();

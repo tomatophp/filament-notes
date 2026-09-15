@@ -2,9 +2,14 @@
 
 namespace TomatoPHP\FilamentNotes\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
+/**
+ * @method static Builder<static> visibleTo(int | string | null $userId)
+ */
 class Note extends Model
 {
     protected $fillable = [
@@ -29,60 +34,69 @@ class Note extends Model
         'is_pined',
         'is_public',
         'place_in',
-        'icon'
+        'icon',
     ];
 
     protected $casts = [
-        "is_pined" => "boolean",
-        "is_public" => "boolean",
-        "checklist" => "json",
+        'is_pined' => 'boolean',
+        'is_public' => 'boolean',
+        'checklist' => 'json',
     ];
 
-
-    /**
-     * @return MorphTo
-     */
-    public function user(): \Illuminate\Database\Eloquent\Relations\MorphTo
+    public function user(): MorphTo
     {
         return $this->morphTo('user');
     }
 
-    /**
-     * @return MorphTo
-     */
-    public function model(): \Illuminate\Database\Eloquent\Relations\MorphTo
+    public function model(): MorphTo
     {
         return $this->morphTo('model');
     }
 
-    public function noteMetas()
+    public function noteMetas(): HasMany
     {
         return $this->hasMany(NoteMeta::class);
     }
 
     /**
-     * @param string $key
-     * @param string|array|object|null $value
-     * @return Model|string|array|null
+     * Limit a query to the notes a user can see: public notes, their own notes,
+     * and private notes shared with them through the user access action.
      */
-    public function meta(string $key, string|array|object|null $value=null): Model|string|null|array
+    public function scopeVisibleTo(Builder $query, int|string|null $userId): Builder
     {
-        if($value!==null){
-            if($value === 'null'){
-                return $this->noteMetas()->updateOrCreate(['key' => $key], ['value' => null]);
+        return $query->where(function (Builder $query) use ($userId): void {
+            $query->where('is_public', true);
+
+            if ($userId === null) {
+                return;
             }
-            else {
-                return $this->noteMetas()->updateOrCreate(['key' => $key], ['value' => $value]);
-            }
+
+            $query
+                ->orWhere('user_id', $userId)
+                ->orWhereHas('noteMetas', fn (Builder $meta) => $meta
+                    ->where('key', config('filament-notes.models.user'))
+                    // Meta values are JSON cast, so a shared user id is stored as "5" or 5.
+                    ->whereIn('value', [(string) $userId, json_encode((string) $userId)]));
+        });
+    }
+
+    /**
+     * Read a meta value, or write it when a value is given.
+     *
+     * @param  string|array<mixed>|object|null  $value
+     * @return Model|string|array<mixed>|null
+     */
+    public function meta(string $key, string|array|object|null $value = null): Model|string|null|array
+    {
+        if ($value !== null) {
+            return $this->noteMetas()->updateOrCreate(['key' => $key], ['value' => $value === 'null' ? null : $value]);
         }
-        else {
-            $meta = $this->noteMetas()->where('key', $key)->first();
-            if($meta){
-                return $meta->value;
-            }
-            else {
-                return $this->noteMetas()->updateOrCreate(['key' => $key], ['value' => null]);
-            }
+
+        $meta = $this->noteMetas()->where('key', $key)->first();
+        if ($meta) {
+            return $meta->value;
         }
+
+        return $this->noteMetas()->updateOrCreate(['key' => $key], ['value' => null]);
     }
 }

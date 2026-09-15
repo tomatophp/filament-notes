@@ -16,7 +16,7 @@
                 @foreach($note->checklist as $key=>$checklist)
                     <div class="flex justify-start gap-2">
                         <div class="flex flex-col justify-center items-center">
-                            <input wire:change="updateChecklist('{{$key}}')" class="fi-checkbox-input dark:bg-gray-700 rounded border-none bg-white shadow-sm ring-1 transition duration-75 checked:ring-0 focus:ring-2 focus:ring-offset-0 disabled:pointer-events-none disabled:bg-gray-50 disabled:text-gray-50 disabled:checked:bg-current disabled:checked:text-gray-400 dark:disabled:bg-transparent dark:disabled:checked:bg-gray-600 text-primary-600 ring-gray-950/10 focus:ring-primary-600 checked:focus:ring-primary-500/50 dark:text-primary-500 dark:ring-white/20 dark:checked:bg-primary-500 dark:focus:ring-primary-500 dark:checked:focus:ring-primary-400/50 dark:disabled:ring-white/10 fi-ta-record-checkbox" type="checkbox" @if(!empty($checklist)) checked @endif>
+                            <input wire:change="updateChecklist({{ \Illuminate\Support\Js::from((string) $key) }})" class="fi-checkbox-input dark:bg-gray-700 rounded border-none bg-white shadow-sm ring-1 transition duration-75 checked:ring-0 focus:ring-2 focus:ring-offset-0 disabled:pointer-events-none disabled:bg-gray-50 disabled:text-gray-50 disabled:checked:bg-current disabled:checked:text-gray-400 dark:disabled:bg-transparent dark:disabled:checked:bg-gray-600 text-primary-600 ring-gray-950/10 focus:ring-primary-600 checked:focus:ring-primary-500/50 dark:text-primary-500 dark:ring-white/20 dark:checked:bg-primary-500 dark:focus:ring-primary-500 dark:checked:focus:ring-primary-400/50 dark:disabled:ring-white/10 fi-ta-record-checkbox" type="checkbox" @if(!empty($checklist)) checked @endif>
                         </div>
                         <div class="flex flex-col justify-center items-center">
                             <h1 class="font-bold">{{ $key }}</h1>
@@ -80,14 +80,9 @@
                                         }"  class="flex flex-col justify-center items-center">
                                 <div>
                                     <div
-                                        @if (\Filament\Support\Facades\FilamentView::hasSpaMode())
-                                            ax-load="visible"
-                                        @else
-                                            ax-load
-                                        @endif
+                                        x-load
                                         wire:ignore
-                                        x-ignore
-                                        x-data="chart({
+                                                                                x-data="chart({
                                                 type: 'doughnut',
                                                 options: {
                                                     plugins: {
@@ -113,9 +108,9 @@
                                                         },
                                                     }
                                                 },
-                                                cachedData: @js($this->getCachedData()),
+                                                cachedData: @js($checklistChartData),
                                             })"
-                                        ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('chart', 'filament/widgets') }}"
+                                        x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('chart', 'filament/widgets') }}"
                                     >
                                         <span class="flex justify-center w-6 h-6" >
                                             <div class="flex flex-col justify-center items-center pt-2 w-6 h-6">
@@ -178,7 +173,7 @@
         border-radius: 5px;
         border: 2px solid {{ $note->border }};
         overflow-wrap: break-word;
-        font-family: "{{$note->font !='null' && !empty($note->font) ? str($note->font)->replace('+', ' ') : filament()->getCurrentPanel()->getFontFamily()}}" !important;
+        font-family: "{{$note->font !='null' && !empty($note->font) ? str($note->font)->replace('+', ' ') : filament()->getFontFamily()}}" !important;
     }
 
     .fi-modal-window:after {
@@ -213,7 +208,7 @@
         border-radius: 5px;
         border: 2px solid {{ $note->border }};
         overflow-wrap: break-word;
-        font-family: "{{$note->font !='null' && !empty($note->font) ? str($note->font)->replace('+', ' ') : filament()->getCurrentPanel()->getFontFamily()}}" !important;
+        font-family: "{{$note->font !='null' && !empty($note->font) ? str($note->font)->replace('+', ' ') : filament()->getFontFamily()}}" !important;
     }
 
     .fi-modal-window:after {

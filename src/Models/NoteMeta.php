@@ -3,6 +3,7 @@
 namespace TomatoPHP\FilamentNotes\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class NoteMeta extends Model
 {
@@ -18,7 +19,7 @@ class NoteMeta extends Model
         'value' => 'json',
     ];
 
-    public function note()
+    public function note(): BelongsTo
     {
         return $this->belongsTo(Note::class);
     }

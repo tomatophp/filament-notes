@@ -5,10 +5,9 @@
 [![Latest Stable Version](https://poser.pugx.org/tomatophp/filament-notes/version.svg)](https://packagist.org/packages/tomatophp/filament-notes)
 [![License](https://poser.pugx.org/tomatophp/filament-notes/license.svg)](https://packagist.org/packages/tomatophp/filament-notes)
 [![Downloads](https://poser.pugx.org/tomatophp/filament-notes/d/total.svg)](https://packagist.org/packages/tomatophp/filament-notes)
+[![Tests](https://github.com/tomatophp/filament-notes/actions/workflows/tests.yml/badge.svg)](https://github.com/tomatophp/filament-notes/actions/workflows/tests.yml)
 
 Add Sticky Notes to your FilamentPHP dashboard with tons of options and style
-
-**NOTE** please make sure you have `SQLite3` ex for PHP to make sure that Icons will be cached and work.
 
 ## Screenshots
 
@@ -41,6 +40,13 @@ Add Sticky Notes to your FilamentPHP dashboard with tons of options and style
 - [ ] Attach Notes To Models
 - [ ] Notes Templates
 
+## Compatibility
+
+| Package version | Filament | Laravel | PHP |
+|-----------------|----------|---------|-----|
+| 5.x | 5.x | 12.x / 13.x | 8.2+ |
+| 1.x ([`v3` branch](https://github.com/tomatophp/filament-notes/tree/v3)) | 3.x | 10.x / 11.x | 8.1+ |
+
 ## Installation
 
 ```bash
@@ -52,11 +58,13 @@ after install your package please run this command
 php artisan filament-notes:install
 ```
 
-Finally reigster the plugin on `/app/Providers/Filament/AdminPanelProvider.php`
+Finally register the plugin on `/app/Providers/Filament/AdminPanelProvider.php`
 
 ```php
 $panel->plugin(\TomatoPHP\FilamentNotes\FilamentNotesPlugin::make())
 ```
+
+Notes are linked to your user model, you can change it from the config file `filament-notes.models.user` (default `App\Models\User`).
 
 ## Use Widget
 
@@ -67,23 +75,26 @@ $panel->widgets([
     \TomatoPHP\FilamentNotes\Filament\Widgets\NotesWidget::class
 ])
 ```
+
+the widget shows the pinned notes the current user can see, you can change how many notes it shows
+
+```php
+$panel->plugin(\TomatoPHP\FilamentNotes\FilamentNotesPlugin::make()
+    ->widgetLimit(8)
+)
+```
+
 ## Use Livewire Component
 
 you can use selected note anywhere using livewire component
 
 ```html
- <livewire:note-action :note="$note" />
+<livewire:note-action :note="$note" />
 ```
 
 ## Use Groups & Status
 
-to use this feature you need to install [filament-types](https://www.github.com/tomatophp/filament-types) or use this command
-
-```bash
-composer require tomatophp/filament-types
-```
-
-than you can use this feature by add this methods to the plugin
+groups and status are stored with [filament-types](https://www.github.com/tomatophp/filament-types) (installed with this package), you can use this feature by add this methods to the plugin
 
 ```php
 $panel->plugin(\TomatoPHP\FilamentNotes\FilamentNotesPlugin::make()
@@ -92,15 +103,11 @@ $panel->plugin(\TomatoPHP\FilamentNotes\FilamentNotesPlugin::make()
 )
 ```
 
+the default groups (`todo`, `ideas`, `saved`) and statuses (`pending`, `processing`, `done`) are created the first time you open the Notes Groups / Notes Status pages from the notes page header.
+
 ## Use Convert Note To Notification
 
-to use this feature you need to install [filament-alerts](https://www.github.com/tomatophp/filament-alerts) or use this command
-
-```bash
-composer require tomatophp/filament-alerts
-```
-
-then you can use this feature by adding this method to the plugin
+you can send a note as a Filament database notification to selected users by adding this method to the plugin (your panel needs `->databaseNotifications()` and the `notifications` table)
 
 ```php
 $panel->plugin(\TomatoPHP\FilamentNotes\FilamentNotesPlugin::make()
@@ -134,7 +141,7 @@ you can use this feature to add a checklist to your notes by allowing this featu
 
 ```php
 $panel->plugin(\TomatoPHP\FilamentNotes\FilamentNotesPlugin::make()
-    ->useChecklist()
+    ->useCheckList()
 )
 ```
 
@@ -146,7 +153,7 @@ you can customize the note resource icon by adding this method to the plugin
 $panel->plugin(\TomatoPHP\FilamentNotes\FilamentNotesPlugin::make()
     ->navigationIcon('heroicon-o-presentation-chart-line')
 )
-````
+```
 
 ## Publish Assets
 
@@ -172,6 +179,24 @@ you can publish migrations file by use this command
 
 ```bash
 php artisan vendor:publish --tag="filament-notes-migrations"
+```
+
+## Testing
+
+```bash
+composer test
+```
+
+## Code Style
+
+```bash
+composer format
+```
+
+## PHPStan
+
+```bash
+composer analyse
 ```
 
 ## Other Filament Packages
