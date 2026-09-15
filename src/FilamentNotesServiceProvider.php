@@ -2,6 +2,8 @@
 
 namespace TomatoPHP\FilamentNotes;
 
+use Filament\Support\Assets\Css;
+use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 use TomatoPHP\FilamentNotes\Console\FilamentNotesInstall;
@@ -43,6 +45,10 @@ class FilamentNotesServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Livewire::component('note-action', NoteAction::class);
+
+        FilamentAsset::register([
+            Css::make('filament-notes', __DIR__.'/../resources/dist/filament-notes.css'),
+        ], 'tomatophp/filament-notes');
 
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
     }

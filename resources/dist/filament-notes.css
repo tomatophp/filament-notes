@@ -1,0 +1,76 @@
+/*
+ * tomatophp/filament-notes
+ *
+ * Filament v5 panels only ship the utilities Filament itself uses, so the note cards, the notes grid,
+ * the widget and the public share page bring the few utilities they need. Everything lives in the
+ * utilities layer so a host theme that already compiles these classes keeps full control.
+ */
+@layer utilities {
+    .flex { display: flex; }
+    .flex-col { flex-direction: column; }
+    .flex-wrap { flex-wrap: wrap; }
+    .items-center { align-items: center; }
+    .justify-start { justify-content: flex-start; }
+    .justify-center { justify-content: center; }
+    .justify-end { justify-content: flex-end; }
+    .justify-between { justify-content: space-between; }
+    .gap-2 { gap: 0.5rem; }
+    .gap-4 { gap: 1rem; }
+
+    .w-4 { width: 1rem; }
+    .w-5 { width: 1.25rem; }
+    .w-6 { width: 1.5rem; }
+    .w-8 { width: 2rem; }
+    .w-full { width: 100%; }
+    .w-screen { width: 100vw; }
+    .h-4 { height: 1rem; }
+    .h-5 { height: 1.25rem; }
+    .h-6 { height: 1.5rem; }
+    .h-8 { height: 2rem; }
+    .h-screen { height: 100vh; }
+    .min-h-screen { min-height: 100vh; }
+
+    .p-4 { padding: 1rem; }
+    .p-6 { padding: 1.5rem; }
+    .px-4 { padding-inline: 1rem; }
+    .py-4 { padding-block: 1rem; }
+    .pt-2 { padding-top: 0.5rem; }
+    .pb-4 { padding-bottom: 1rem; }
+    .mb-2 { margin-bottom: 0.5rem; }
+    .my-4 { margin-block: 1rem; }
+
+    .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+    .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+    .font-normal { font-weight: 400; }
+    .font-bold { font-weight: 700; }
+    .text-start { text-align: start; }
+    .text-wrap { text-wrap: wrap; }
+    .antialiased { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+    .rounded { border-radius: 0.25rem; }
+    .border-none { border-style: none; }
+    .shadow-sm { box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1); }
+    .ring-1 { box-shadow: 0 0 0 1px var(--tw-ring-color, currentColor); }
+    .ring-gray-950\/10 { --tw-ring-color: color-mix(in oklab, var(--gray-950) 10%, transparent); }
+    .cursor-pointer { cursor: pointer; }
+    .transition { transition-property: color, background-color, border-color, box-shadow, opacity, transform; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+    .duration-75 { transition-duration: 75ms; }
+
+    .bg-white { background-color: #fff; }
+    .bg-gray-50 { background-color: var(--gray-50); }
+    .text-gray-100 { color: var(--gray-100); }
+    .text-gray-200 { color: var(--gray-200); }
+    .text-gray-400 { color: var(--gray-400); }
+    .text-gray-500 { color: var(--gray-500); }
+    .text-gray-950 { color: var(--gray-950); }
+    .text-primary-600 { color: var(--primary-600); }
+
+    :where(.dark, .dark *) .dark\:bg-gray-700 { background-color: var(--gray-700); }
+    :where(.dark, .dark *) .dark\:bg-gray-900 { background-color: var(--gray-900); }
+    :where(.dark, .dark *) .dark\:bg-gray-950 { background-color: var(--gray-950); }
+    :where(.dark, .dark *) .dark\:text-white { color: #fff; }
+    :where(.dark, .dark *) .dark\:text-gray-400 { color: var(--gray-400); }
+    :where(.dark, .dark *) .dark\:text-gray-800 { color: var(--gray-800); }
+    :where(.dark, .dark *) .dark\:text-primary-500 { color: var(--primary-500); }
+    :where(.dark, .dark *) .dark\:ring-white\/20 { --tw-ring-color: rgb(255 255 255 / 0.2); }
+}
