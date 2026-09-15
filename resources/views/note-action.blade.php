@@ -16,7 +16,7 @@
                         <h1 class="font-bold text-lg mb-2">{{ $note->title }}</h1>
                     @endif
                     <p style=" line-height: 1.2em;" class="prose text-wrap ">
-                        {!! str($note->body)->markdown()->limit(400)->toString() !!}
+                        {!! str($note->body)->markdown()->limit(400)->sanitizeHtml()->toString() !!}
                     </p>
                 </div>
 

@@ -10,4 +10,5 @@
 - `useNotification()` now sends Filament database notifications to the selected users (the old `filament-alerts` v1 API is gone).
 - The public share page no longer needs a Vite build and returns 404 for unknown share links.
 - Checklist toggles are limited to the note owner.
+- Note bodies are sanitized before rendering on the cards, the note modal and the public share page (no stored script or event-handler HTML).
 - Added a Pest test suite (Testbench) and GitHub Actions workflow.

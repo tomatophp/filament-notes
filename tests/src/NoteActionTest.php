@@ -25,6 +25,26 @@ it('renders a note', function () {
         ->assertSee('Sticky title');
 });
 
+it('sanitizes the note body on the card and the public share page', function () {
+    $note = NoteFactory::new()->create([
+        'user_id' => $this->user->id,
+        'body' => '<p>Safe text</p><script>alert("xss")</script><img src="x" onerror="alert(1)">',
+    ]);
+    $note->meta('share', 'xss-link');
+
+    livewire(NoteAction::class, ['note' => $note])
+        ->assertSuccessful()
+        ->assertSee('Safe text')
+        ->assertDontSee('<script>alert("xss")</script>', false)
+        ->assertDontSee('onerror', false);
+
+    get(route('notes.view', ['note' => $note, 'uuid' => 'xss-link']))
+        ->assertSuccessful()
+        ->assertSee('Safe text')
+        ->assertDontSee('<script>alert("xss")</script>', false)
+        ->assertDontSee('onerror', false);
+});
+
 it('opens the note view modal', function () {
     $note = NoteFactory::new()->create(['user_id' => $this->user->id, 'checklist' => ['Buy milk' => false]]);
 

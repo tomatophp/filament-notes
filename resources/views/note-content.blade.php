@@ -1,3 +1,3 @@
 <div>
-    {!!  str($note->body)->markdown() !!}
+    {!! str($note->body)->markdown()->sanitizeHtml() !!}
 </div>
