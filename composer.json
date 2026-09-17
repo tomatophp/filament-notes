@@ -2,6 +2,7 @@
     "name": "tomatophp/filament-notes",
     "type": "library",
     "description": "Add Sticky Notes to your FilamentPHP dashboard with tons of options and style",
+    "homepage": "https://tomatophp.com/en/plugins/filament-notes",
     "keywords": [
         "php",
         "laravel",
@@ -71,5 +72,5 @@
         "phpstan/phpstan-deprecation-rules": "^2.0",
         "phpstan/phpstan-phpunit": "^2.0"
     },
-    "version": "5.0.1"
+    "version": "5.0.2"
 }

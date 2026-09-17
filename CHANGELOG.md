@@ -1,5 +1,9 @@
 # Changelog
 
+### v5.0.2
+
+- point `homepage` at the plugin page on tomatophp.com
+
 ## v5.0.1
 
 - The notes stylesheet is no longer wrapped in a cascade layer. It loads before Filament's app.css, so the layered rules ranked below Filament's reset and the note cards lost their padding and text sizes. Run `php artisan filament:assets` after updating.
